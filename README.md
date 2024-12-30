@@ -2,6 +2,8 @@
 
 A docker compose setup for running the JSON-RPC server in LD (Local Data) mode with all of its dependencies
 
+Note: this setup is still a WIP and is not ready for production use.
+
 ## Prerequisites
 
 - Docker
