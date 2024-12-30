@@ -1,0 +1,28 @@
+diff --git a/src/config.ts b/src/config.ts
+index e65affa..eade4c7 100644
+--- a/src/config.ts
++++ b/src/config.ts
+@@ -140,7 +140,7 @@ export const CONFIG: Config = {
+   askLocalHostForArchiver: true,
+   rotationInterval: 60,
+   faucetServerUrl: process.env.FAUCET_URL || 'https://faucet.liberty10.shardeum.org',
+-  queryFromValidator: Boolean(process.env.QUERY_FROM_VALIDATOR) || true,
++  queryFromValidator: false,
+   explorerUrl: process.env.EXPLORER_URL || 'http://127.0.0.1:6001',
+   queryFromExplorer: false,
+   generateTxTimestamp: true,
+@@ -193,11 +193,11 @@ export const CONFIG: Config = {
+   isRemoteLocalNetwork: false,
+   nodeExternalIpForRemoteLocalNetwork: '127.0.0.1',
+   collectorSourcing: {
+-    enabled: false,
+-    collectorApiServerUrl: 'http://0.0.0.0:6001',
++    enabled: true,
++    collectorApiServerUrl: 'http://0.0.0.0:6100',
+   },
+   serviceValidatorSourcing: {
+-    enabled: false,
++    enabled: true,
+     serviceValidatorUrl: 'http://0.0.0.0:9001',
+   },
+ 

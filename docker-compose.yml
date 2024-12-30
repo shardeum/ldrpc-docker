@@ -1,0 +1,96 @@
+services:
+  validator:
+    image: ghcr.io/shardeum/shardeum-validator:latest
+    depends_on:
+      - archiver
+    ports:
+      - "8080:8080"
+      - "9001:9001"
+      - "10001:10001"
+    volumes:
+      - ./shardeum:/home/node/config
+      - validator-data:/app/db
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9001/is-healthy"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    environment:
+      RPC_SERVER_URL: 'http://json-rpc:8080'
+      APP_MONITOR: 'http://collector:6001'
+      EXISTING_ARCHIVERS: '[{"ip":"archiver","port":4000,"publicKey":"somekeygoeshere"}]'
+      EXT_IP: '127.0.0.1'
+
+  archiver:
+    build:
+      context: .
+      dockerfile: Dockerfile.archiver
+    ports:
+      - "4000:4000"
+    volumes:
+      - archiver-data:/app/db
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:4000/is-healthy"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  distributor:
+    build:
+      context: .
+      dockerfile: Dockerfile.distributor
+    ports:
+      - "6100:6100"
+    volumes:
+      - distributor-data:/data
+    depends_on:
+      archiver:
+        condition: service_healthy
+      validator:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6100/is-healthy"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  collector:
+    build:
+      context: .
+      dockerfile: Dockerfile.collector
+    ports:
+      - "6001:6001"
+      - "4446:4446"
+    volumes:
+      - collector-db:/app/db
+    depends_on:
+      distributor:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6001/totalData"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  json-rpc:
+    build:
+      context: .
+      dockerfile: Dockerfile.rpc
+    ports:
+      - "8080:8080"
+    depends_on:
+      collector:
+        condition: service_healthy
+      validator:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-X POST", "-H", "Content-Type: application/json", "--data", "'{\"jsonrpc\":\"2.0\",\"method\":\"eth_chainId\",\"params\":[],\"id\":1}'", "http://localhost:8080"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+volumes:
+  validator-data:
+  archiver-data:
+  distributor-data:
+  collector-db: 

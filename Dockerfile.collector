@@ -1,0 +1,29 @@
+FROM node:18.16.1
+
+COPY scripts/install.sh .
+RUN ./install.sh
+
+WORKDIR /app
+
+# Clone collector repo
+RUN git clone -b dev https://github.com/shardeum/relayer-collector.git . \
+    && npm install
+
+# Apply patches if they exist
+COPY patches/collector/* ./patches/
+
+RUN for patch in ./patches/*.patch; do \
+      if [ -f "$patch" ]; then \
+        git apply "$patch"; \
+      fi; \
+    done
+
+# Build
+RUN npm run prepare
+
+# Create data directory
+RUN mkdir -p /app/db
+
+EXPOSE 6001 4446
+
+CMD ["sh", "-c", "npm run collector & npm run server & npm run log_server"] 

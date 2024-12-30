@@ -1,0 +1,28 @@
+FROM node:18.16.1
+
+COPY scripts/install.sh .
+RUN ./install.sh
+
+WORKDIR /app
+
+# Configure git
+RUN git config --global credential.helper cache
+
+# Clone archiver repo
+RUN git clone -b dev https://github.com/shardeum/archive-server.git . \
+    && npm install
+
+# Apply patches if they exist
+# COPY patches/archiver/* ./patches/
+# RUN for patch in ./patches/*.patch; do \
+#       if [ -f "$patch" ]; then \
+#         git apply "$patch"; \
+#       fi; \
+#     done
+
+# Build and run
+RUN npm run prepare
+
+EXPOSE 4000
+
+CMD ["node", "build/server.js"] 

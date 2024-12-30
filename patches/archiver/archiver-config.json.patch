@@ -1,0 +1,10 @@
+--- a/archiver-config.json
++++ b/archiver-config.json
+@@ -1,7 +1,7 @@
+ {
+-  "ARCHIVER_IP": "0.0.0.0",
++  "ARCHIVER_IP": "0.0.0.0",
+   "ARCHIVER_PORT": 4000,
+   "ARCHIVER_HASH_KEY": "",
+   "ARCHIVER_PUBLIC_KEY": "",
+   "ARCHIVER_SECRET_KEY": "",
