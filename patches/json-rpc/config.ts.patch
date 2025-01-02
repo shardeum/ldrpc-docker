@@ -18,11 +18,12 @@ index e65affa..eade4c7 100644
 -    enabled: false,
 -    collectorApiServerUrl: 'http://0.0.0.0:6001',
 +    enabled: true,
-+    collectorApiServerUrl: 'http://0.0.0.0:6100',
++    collectorApiServerUrl: 'http://collector:6100',
    },
    serviceValidatorSourcing: {
 -    enabled: false,
 +    enabled: true,
-     serviceValidatorUrl: 'http://0.0.0.0:9001',
+-    serviceValidatorUrl: 'http://0.0.0.0:9001',
++    serviceValidatorUrl: 'http://validator:9091',
    },
  

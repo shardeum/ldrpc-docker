@@ -11,16 +11,13 @@ services:
       - ./shardeum:/home/node/config
       - validator-data:/app/db
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:9001/is-healthy"]
+      test: ["CMD", "curl", "-f", "http://localhost:9001"]
       interval: 30s
       timeout: 10s
       retries: 3
     environment:
-      RPC_SERVER_URL: 'http://json-rpc:8080'
-      APP_MONITOR: 'http://collector:6001'
-      EXISTING_ARCHIVERS: '[{"ip":"archiver","port":4000,"publicKey":"somekeygoeshere"}]'
-      EXT_IP: '127.0.0.1'
-
+      RPC_SERVER_URL: http://json-rpc:8088
+      EXISTING_ARCHIVERS: '[{"ip":"archiver","port":4000,"publicKey":"0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef"}]'
   archiver:
     build:
       context: .
@@ -53,7 +50,6 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-
   collector:
     build:
       context: .
@@ -71,7 +67,6 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-
   json-rpc:
     build:
       context: .
@@ -88,7 +83,6 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-
 volumes:
   validator-data:
   archiver-data:

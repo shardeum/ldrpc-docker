@@ -12,13 +12,8 @@ RUN git config --global credential.helper cache
 RUN git clone -b dev https://github.com/shardeum/archive-server.git . \
     && npm install
 
-# Apply patches if they exist
-# COPY patches/archiver/* ./patches/
-# RUN for patch in ./patches/*.patch; do \
-#       if [ -f "$patch" ]; then \
-#         git apply "$patch"; \
-#       fi; \
-#     done
+# apply debugsecrets.patch
+RUN git apply debugsecrets.patch
 
 # Build and run
 RUN npm run prepare
