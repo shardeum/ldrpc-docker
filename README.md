@@ -1,41 +1,71 @@
-# Shardeum JSON-RPC Server in LD (Local Data) mode Docker Compose
+# Shardeum JSON-RPC Server in LD (Local Data) mode Docker
 
-A docker compose setup for running the JSON-RPC server in LD (Local Data) mode with all of its dependencies
+A docker setup for running the JSON-RPC server in LD (Local Data) mode with all of its dependencies
 
-Note: this setup is still a WIP and is not ready for production use.
+## Diagram
+
+This docker container is meant to run all the services in the right dotted box of the diagram below.
+
+![LD RPC Setup](https://github.com/shardeum/relayer-collector/raw/dev/ldrpc-setup.png)
 
 ## Prerequisites
+
+### Archiver and distributor
+You will need to have an archiver and distributor running somewhere. Thes configs will be provided by a shardeum representative or if you need to run a local devnet you can follow [these instructions](https://github.com/shardeum/shardeum?tab=readme-ov-file#installation) to run `shardus start 10` as well as boot a [distributor](https://github.com/shardeum/relayer-distributor) following the instructions as well.
 
 - Docker
 
 ## Usage
 
 1. Clone the repository
-2. Run `docker build -f Dockerfile -t shardeum-jsonrpc-ld-all-test .`
-
-```
-docker build -f Dockerfile \
-  -t shardeum-jsonrpc-ld-all-test \
-  --build-arg ARCHIVER_IP=<archiver-ip> \
-  --build-arg ARCHIVER_PUBKEY=<archiver-pubkey> \
-  --build-arg DISTRIBUTOR_PUBKEY=<distributor-pubkey> \
-  --build-arg COLLECTOR_PUBKEY=<your-collector-pubkey> \
-  --build-arg COLLECTOR_SECRETKEY=<your-collector-secretkey> \
+2. Build the image:
+```bash
+docker build -f Dockerfile -t shardeum-jsonrpc-ld-all-test .
 ```
 
-3. Run `docker run -p 8080:8080 -it shardeum-jsonrpc-ld-all-test`
+3. Run the container with environment variables:
+```bash
+docker run -p 8080:8080 -it \
+  -e ARCHIVER_IP=<archiver-ip> \
+  -e ARCHIVER_PUBKEY=<archiver-pubkey> \
+  -e DISTRIBUTOR_PUBKEY=<distributor-pubkey> \
+  -e COLLECTOR_PUBKEY=<your-collector-pubkey> \
+  -e COLLECTOR_SECRETKEY=<your-collector-secretkey> \
+  shardeum-jsonrpc-ld-all-test
+```
+
 4. The JSON-RPC server will be available at `http://localhost:8080`
 5. You can now curl it: 
-```
-$ curl -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}' http://localhost:8080`
+```bash
+$ curl -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}' http://localhost:8080
+
 {"jsonrpc":"2.0","id":1,"result":"0x1f92"}
 ```
 
 ## Configuration
 
-The configuration is done in the `docker-compose.yml` file.
+The configuration is done through environment variables when running the container:
+- `ARCHIVER_IP`: IP address of the archiver - should be provided by a shardeum representative
+- `ARCHIVER_PUBKEY`: Public key of the archiver - should be provided by a shardeum representative
+- `DISTRIBUTOR_IP`: IP address of the distributor - should be provided by a shardeum representative
+- `DISTRIBUTOR_PUBKEY`: Public key of the distributor - should be provided by a shardeum representative
+- `COLLECTOR_PUBKEY`: Your collector public key - should be generated using the following instructions
+- `COLLECTOR_SECRETKEY`: Your collector secret key - should be generated using the following instructions
 
-## Patches
+## Keys
+To generate collector public and secret keys, you can generate them using the following commands:
 
-The `patches/` directory contains patches for the relevant services.
+```bash
+$ docker run -it shardeum-jsonrpc-ld-all-test /bin/bash
+root@b903ee67f879:/app$ cd shardeum/
+root@b903ee67f879:/app/shardeum$ node scripts/generateWallet.js 
+Public Key: <your-collector-pubkey>
+Secret Key: <your-collector-secretkey>
+```
 
+## Debugging
+you can attach to the container and check list out the services and their status with `pm2`
+```bash
+$ docker exec -it $(docker ps --format '{{.Names}}' --filter ancestor=shardeum-jsonrpc-ld-all-test) /bin/bash
+root@b903ee67f879:/app$ pm2 list
+```
