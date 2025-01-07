@@ -27,7 +27,7 @@ env:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
-    timeout-minutes: 120  # Set 2 hour timeout
+    timeout-minutes: 120
     permissions:
       contents: read
       packages: write
@@ -43,37 +43,17 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v3
-        with:
-          buildkitd-flags: --debug
+      - name: Build Docker image
+        run: |
+          docker build \
+            --build-arg SHARDEUM_BRANCH=${{ inputs.shardeum_branch }} \
+            --build-arg RELAYER_COLLECTOR_BRANCH=${{ inputs.relayer_collector_branch }} \
+            --build-arg JSON_RPC_SERVER_BRANCH=${{ inputs.json_rpc_server_branch }} \
+            -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ inputs.image_tag }} \
+            -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest \
+            .
 
-      - name: Docker Build Cache
-        uses: actions/cache@v3
-        with:
-          path: /tmp/.buildx-cache
-          key: ${{ runner.os }}-buildx-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-buildx-
-
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v5
-        with:
-          context: .
-          push: true
-          build-args: |
-            SHARDEUM_BRANCH=${{ inputs.shardeum_branch }}
-            RELAYER_COLLECTOR_BRANCH=${{ inputs.relayer_collector_branch }}
-            JSON_RPC_SERVER_BRANCH=${{ inputs.json_rpc_server_branch }}
-          tags: |
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ inputs.image_tag }}
-            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
-          cache-from: type=local,src=/tmp/.buildx-cache
-          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
-          outputs: type=docker
-          build-contexts: |
-            app=.
-          provenance: false
-          no-cache: false
-          pull: true
-          progress: plain
+      - name: Push Docker image
+        run: |
+          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ inputs.image_tag }}
+          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
