@@ -27,6 +27,7 @@ env:
 jobs:
   build-and-push:
     runs-on: ubuntu-latest
+    timeout-minutes: 120  # Set 2 hour timeout
     permissions:
       contents: read
       packages: write
@@ -44,6 +45,16 @@ jobs:
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
+        with:
+          buildkitd-flags: --debug
+
+      - name: Docker Build Cache
+        uses: actions/cache@v3
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
@@ -57,3 +68,12 @@ jobs:
           tags: |
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ inputs.image_tag }}
             ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          cache-from: type=local,src=/tmp/.buildx-cache
+          cache-to: type=local,dest=/tmp/.buildx-cache-new,mode=max
+          outputs: type=docker
+          build-contexts: |
+            app=.
+          provenance: false
+          no-cache: false
+          pull: true
+          progress: plain
