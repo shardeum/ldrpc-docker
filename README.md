@@ -27,7 +27,9 @@ docker build -f Dockerfile -t shardeum-jsonrpc-ld-all-test .
 ```bash
 docker run -p 8080:8080 -it \
   -e ARCHIVER_IP=<archiver-ip> \
+  -e ARCHIVER_PORT=<archiver-port> \
   -e ARCHIVER_PUBKEY=<archiver-pubkey> \
+  -e DISTRIBUTOR_IP=<distributor-ip> \
   -e DISTRIBUTOR_PUBKEY=<distributor-pubkey> \
   -e COLLECTOR_PUBKEY=<your-collector-pubkey> \
   -e COLLECTOR_SECRETKEY=<your-collector-secretkey> \
@@ -42,7 +44,23 @@ $ curl -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","met
 {"jsonrpc":"2.0","id":1,"result":"0x1f92"}
 ```
 
-## Configuration
+## Build Configuration
+
+The configuration is done through build arguments when building the container:
+- `SHARDEUM_BRANCH`: Branch of the shardeum repository to use
+- `RELAYER_COLLECTOR_BRANCH`: Branch of the relayer-collector repository to use
+- `JSON_RPC_SERVER_BRANCH`: Branch of the json-rpc-server repository to use
+
+Examples
+```bash
+docker build -f Dockerfile \
+  --build-arg SHARDEUM_BRANCH=itn4-1.16.3 \
+  --build-arg RELAYER_COLLECTOR_BRANCH=itn4 \
+  --build-arg JSON_RPC_SERVER_BRANCH=itn4 \
+  -t shardeum-jsonrpc-ld-all-test .
+```
+
+## Run Configuration
 
 The configuration is done through environment variables when running the container:
 - `ARCHIVER_IP`: IP address of the archiver - should be provided by a shardeum representative

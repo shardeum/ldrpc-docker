@@ -3,6 +3,7 @@
 # Configure Validator
 cd /app/shardeum
 jq ".server.p2p.existingArchivers[].ip |= \"$ARCHIVER_IP\"" config.json > tmp.json && mv tmp.json config.json
+jq ".server.p2p.existingArchivers[].port |= \"$ARCHIVER_PORT\"" config.json > tmp.json && mv tmp.json config.json
 jq ".server.p2p.existingArchivers[].publicKey |= \"$ARCHIVER_PUBKEY\"" config.json > tmp.json && mv tmp.json config.json
 sed -i "s/startInServiceMode: false/startInServiceMode: true/" src/shardeum/shardeumFlags.ts
 npm run prepare
@@ -17,7 +18,7 @@ jq --arg ip "$DISTRIBUTOR_IP" \
    config.json > temp.json && mv temp.json config.json
 
 sed -i "s#enableCollectorSocketServer: false#enableCollectorSocketServer: true#" src/config/index.ts
-sed -i "s#shardeumIndexerSqlitePath: 'shardeum.sqlite'#shardeumIndexerSqlitePath: '/app/shardeum/db/shardeum.sqlite'#" src/config/index.ts
+export SERVICE_VALIDATOR_DB_PATH=/app/shardeum/db/shardeum.sqlite
 npm run prepare
 
 # Configure JSON RPC Server
