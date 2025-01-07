@@ -43,17 +43,30 @@ jobs:
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Determine architecture
+        id: arch
+        run: |
+          ARCH=$(uname -m)
+          if [ "$ARCH" == "aarch64" ] || [ "$ARCH" == "arm64" ]; then
+            echo "ARCH_TAG=arm64" >> $GITHUB_OUTPUT
+          elif [ "$ARCH" == "x86_64" ]; then
+            echo "ARCH_TAG=amd64" >> $GITHUB_OUTPUT
+          else
+            echo "Unsupported architecture: $ARCH. Exiting."
+            exit 1
+          fi
+
       - name: Build Docker image
         run: |
           docker build \
             --build-arg SHARDEUM_BRANCH=${{ inputs.shardeum_branch }} \
             --build-arg RELAYER_COLLECTOR_BRANCH=${{ inputs.relayer_collector_branch }} \
             --build-arg JSON_RPC_SERVER_BRANCH=${{ inputs.json_rpc_server_branch }} \
-            -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ inputs.image_tag }} \
-            -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest \
+            -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.arch.outputs.ARCH_TAG }}-${{ inputs.image_tag }} \
+            -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.arch.outputs.ARCH_TAG }}-latest \
             .
 
       - name: Push Docker image
         run: |
-          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ inputs.image_tag }}
-          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.arch.outputs.ARCH_TAG }}-${{ inputs.image_tag }}
+          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.arch.outputs.ARCH_TAG }}-latest
