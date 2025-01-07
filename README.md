@@ -11,7 +11,7 @@ This docker container is meant to run all the services in the right dotted box o
 ## Prerequisites
 
 ### Archiver and distributor
-You will need to have an archiver and distributor running somewhere. Thes configs will be provided by a shardeum representative or if you need to run a local devnet you can follow [these instructions](https://github.com/shardeum/shardeum?tab=readme-ov-file#installation) to run `shardus start 10` as well as boot a [distributor](https://github.com/shardeum/relayer-distributor) following the instructions as well.
+You will need to have an archiver and distributor running somewhere. These configs will be provided by a shardeum representative or if you need to run a local devnet you can follow [these instructions](https://github.com/shardeum/shardeum?tab=readme-ov-file#installation) to run `shardus start 10` as well as boot a [distributor](https://github.com/shardeum/relayer-distributor) following the instructions as well.
 
 - Docker
 
