@@ -68,5 +68,5 @@ jobs:
 
       - name: Push Docker image
         run: |
-          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.arch.outputs.ARCH_TAG }}-${{ inputs.image_tag }}
-          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.arch.outputs.ARCH_TAG }}-latest
+          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ steps.arch.outputs.ARCH_TAG }}:${{ inputs.image_tag }}
+          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ steps.arch.outputs.ARCH_TAG }}:latest
