@@ -17,13 +17,7 @@ You will need to have an archiver and distributor running somewhere. These confi
 
 ## Usage
 
-1. Clone the repository
-2. Build the image:
-```bash
-docker build -f Dockerfile -t shardeum-jsonrpc-ld-all-test .
-```
-
-3. Run the container with environment variables:
+1. Run the docker container with environment variables:
 ```bash
 docker run -p 8080:8080 -it \
   -e ARCHIVER_IP=<archiver-ip> \
@@ -33,31 +27,15 @@ docker run -p 8080:8080 -it \
   -e DISTRIBUTOR_PUBKEY=<distributor-pubkey> \
   -e COLLECTOR_PUBKEY=<your-collector-pubkey> \
   -e COLLECTOR_SECRETKEY=<your-collector-secretkey> \
-  shardeum-jsonrpc-ld-all-test
+  ghcr.io/shardeum/shardeum-jsonrpc-ld-docker-amd64:latest
 ```
 
-4. The JSON-RPC server will be available at `http://localhost:8080`
-5. You can now curl it: 
+2. The JSON-RPC server will be available at `http://localhost:8080`
+3. You can now curl it: 
 ```bash
 $ curl -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}' http://localhost:8080
 
 {"jsonrpc":"2.0","id":1,"result":"0x1f92"}
-```
-
-## Build Configuration
-
-The configuration is done through build arguments when building the container:
-- `SHARDEUM_BRANCH`: Branch of the shardeum repository to use
-- `RELAYER_COLLECTOR_BRANCH`: Branch of the relayer-collector repository to use
-- `JSON_RPC_SERVER_BRANCH`: Branch of the json-rpc-server repository to use
-
-Examples
-```bash
-docker build -f Dockerfile \
-  --build-arg SHARDEUM_BRANCH=itn4-1.16.3 \
-  --build-arg RELAYER_COLLECTOR_BRANCH=itn4 \
-  --build-arg JSON_RPC_SERVER_BRANCH=itn4 \
-  -t shardeum-jsonrpc-ld-all-test .
 ```
 
 ## Run Configuration
@@ -75,16 +53,35 @@ You will need to generate a collector public and secret key. The public key you 
 To generate collector public and secret keys, you can generate them using the following commands:
 
 ```bash
-$ docker run -it shardeum-jsonrpc-ld-all-test /bin/bash
+$ docker run -it ghcr.io/shardeum/shardeum-jsonrpc-ld-docker-amd64:latest /bin/bash
 root@b903ee67f879:/app$ cd shardeum/
 root@b903ee67f879:/app/shardeum$ node scripts/generateWallet.js 
 Public Key: <your-collector-pubkey>
 Secret Key: <your-collector-secretkey>
 ```
 
+## Build Configuration
+
+The branch configuration is done through build arguments when building the container:
+- `SHARDEUM_BRANCH`: Branch of the shardeum repository to use
+- `RELAYER_COLLECTOR_BRANCH`: Branch of the relayer-collector repository to use
+- `JSON_RPC_SERVER_BRANCH`: Branch of the json-rpc-server repository to use
+
+Examples
+```bash
+docker build -f Dockerfile \
+  --build-arg SHARDEUM_BRANCH=itn4-1.16.3 \
+  --build-arg RELAYER_COLLECTOR_BRANCH=itn4 \
+  --build-arg JSON_RPC_SERVER_BRANCH=itn4 \
+  -t shardeum-jsonrpc-ld-all-test .
+```
+
 ## Debugging
 you can attach to the container and check list out the services and their status with `pm2`
 ```bash
-$ docker exec -it $(docker ps --format '{{.Names}}' --filter ancestor=shardeum-jsonrpc-ld-all-test) /bin/bash
+$ docker exec -it $(docker ps --format '{{.Names}}' --filter ancestor=ghcr.io/shardeum/shardeum-jsonrpc-ld-docker-amd64:latest) /bin/bash
 root@b903ee67f879:/app$ pm2 list
 ```
+
+## Github actions publishing
+You can make builds and publish them via the github actions in this repository. It has inputs to the workflow that get passed to the build args for docker, and wether or not to publish to latest or not.
