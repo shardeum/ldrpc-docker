@@ -24,6 +24,8 @@ on:
         type: boolean
         required: true
         default: false
+  pull_request:
+    branches: [ main ]
 
 env:
   REGISTRY: ghcr.io
@@ -36,6 +38,7 @@ jobs:
     permissions:
       contents: read
       packages: write
+      pull-requests: write
 
     steps:
       - name: Checkout repository
@@ -61,22 +64,63 @@ jobs:
             exit 1
           fi
 
+      - name: Set build args and tags
+        id: build_config
+        run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            echo "SHARDEUM_BRANCH=dev" >> $GITHUB_OUTPUT
+            echo "RELAYER_COLLECTOR_BRANCH=dev" >> $GITHUB_OUTPUT
+            echo "JSON_RPC_SERVER_BRANCH=dev" >> $GITHUB_OUTPUT
+            echo "IMAGE_TAG=pr-preview-${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
+          else
+            echo "SHARDEUM_BRANCH=${{ inputs.shardeum_branch }}" >> $GITHUB_OUTPUT
+            echo "RELAYER_COLLECTOR_BRANCH=${{ inputs.relayer_collector_branch }}" >> $GITHUB_OUTPUT
+            echo "JSON_RPC_SERVER_BRANCH=${{ inputs.json_rpc_server_branch }}" >> $GITHUB_OUTPUT
+            echo "IMAGE_TAG=${{ inputs.image_tag }}" >> $GITHUB_OUTPUT
+          fi
+
       - name: Build Docker image
         run: |
-          TAGS="-t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ steps.arch.outputs.ARCH_TAG }}:${{ inputs.image_tag }}"
-          if [ "${{ inputs.push_latest }}" == "true" ]; then
+          TAGS="-t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ steps.arch.outputs.ARCH_TAG }}:${{ steps.build_config.outputs.IMAGE_TAG }}"
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ] && [ "${{ inputs.push_latest }}" == "true" ]; then
             TAGS="$TAGS -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ steps.arch.outputs.ARCH_TAG }}:latest"
           fi
           docker build \
-            --build-arg SHARDEUM_BRANCH=${{ inputs.shardeum_branch }} \
-            --build-arg RELAYER_COLLECTOR_BRANCH=${{ inputs.relayer_collector_branch }} \
-            --build-arg JSON_RPC_SERVER_BRANCH=${{ inputs.json_rpc_server_branch }} \
+            --build-arg SHARDEUM_BRANCH=${{ steps.build_config.outputs.SHARDEUM_BRANCH }} \
+            --build-arg RELAYER_COLLECTOR_BRANCH=${{ steps.build_config.outputs.RELAYER_COLLECTOR_BRANCH }} \
+            --build-arg JSON_RPC_SERVER_BRANCH=${{ steps.build_config.outputs.JSON_RPC_SERVER_BRANCH }} \
             $TAGS \
             .
 
       - name: Push Docker image
         run: |
-          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ steps.arch.outputs.ARCH_TAG }}:${{ inputs.image_tag }}
-          if [ "${{ inputs.push_latest }}" == "true" ]; then
+          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ steps.arch.outputs.ARCH_TAG }}:${{ steps.build_config.outputs.IMAGE_TAG }}
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ] && [ "${{ inputs.push_latest }}" == "true" ]; then
             docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ steps.arch.outputs.ARCH_TAG }}:latest
           fi
+
+      - name: Comment PR with Docker instructions
+        if: github.event_name == 'pull_request'
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const imageTag = 'pr-preview-${{ github.event.pull_request.number }}';
+            const comment = `
+            ### 🐳 Docker Image Preview Available
+            
+            You can test this PR using the following Docker image:
+            
+            \`\`\`bash
+            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ steps.arch.outputs.ARCH_TAG }}:${imageTag}
+            docker run -it ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ steps.arch.outputs.ARCH_TAG }}:${imageTag}
+            \`\`\`
+            
+            > Note: This image was built for ${{ steps.arch.outputs.ARCH_TAG }} architecture
+            `;
+            
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
