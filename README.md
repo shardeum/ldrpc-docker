@@ -85,3 +85,6 @@ root@b903ee67f879:/app$ pm2 list
 
 ## Github actions publishing
 You can make builds and publish them via the github actions in this repository. It has inputs to the workflow that get passed to the build args for docker, and wether or not to publish to latest or not.
+
+![image](https://github.com/user-attachments/assets/8038709b-d343-4f67-b51c-514f11019fda)
+
