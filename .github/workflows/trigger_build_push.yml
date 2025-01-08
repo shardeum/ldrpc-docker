@@ -19,6 +19,11 @@ on:
         description: 'Docker image tag'
         required: true
         default: 'itn4-1.16.3'
+      push_latest:
+        description: 'Push latest tag'
+        type: boolean
+        required: true
+        default: false
 
 env:
   REGISTRY: ghcr.io
@@ -58,15 +63,20 @@ jobs:
 
       - name: Build Docker image
         run: |
+          TAGS="-t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ steps.arch.outputs.ARCH_TAG }}:${{ inputs.image_tag }}"
+          if [ "${{ inputs.push_latest }}" == "true" ]; then
+            TAGS="$TAGS -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ steps.arch.outputs.ARCH_TAG }}:latest"
+          fi
           docker build \
             --build-arg SHARDEUM_BRANCH=${{ inputs.shardeum_branch }} \
             --build-arg RELAYER_COLLECTOR_BRANCH=${{ inputs.relayer_collector_branch }} \
             --build-arg JSON_RPC_SERVER_BRANCH=${{ inputs.json_rpc_server_branch }} \
-            -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ steps.arch.outputs.ARCH_TAG }}:${{ inputs.image_tag }} \
-            -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ steps.arch.outputs.ARCH_TAG }}:latest \
+            $TAGS \
             .
 
       - name: Push Docker image
         run: |
           docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ steps.arch.outputs.ARCH_TAG }}:${{ inputs.image_tag }}
-          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ steps.arch.outputs.ARCH_TAG }}:latest
+          if [ "${{ inputs.push_latest }}" == "true" ]; then
+            docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ steps.arch.outputs.ARCH_TAG }}:latest
+          fi
