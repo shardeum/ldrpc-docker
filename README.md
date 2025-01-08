@@ -71,6 +71,7 @@ The configuration is done through environment variables when running the contain
 - `COLLECTOR_SECRETKEY`: Your collector secret key - should be generated using the following instructions
 
 ## Keys
+You will need to generate a collector public and secret key. The public key you will need to provide to the shardeum representative.
 To generate collector public and secret keys, you can generate them using the following commands:
 
 ```bash
