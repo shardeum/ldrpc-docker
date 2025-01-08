@@ -62,8 +62,8 @@ jobs:
             --build-arg SHARDEUM_BRANCH=${{ inputs.shardeum_branch }} \
             --build-arg RELAYER_COLLECTOR_BRANCH=${{ inputs.relayer_collector_branch }} \
             --build-arg JSON_RPC_SERVER_BRANCH=${{ inputs.json_rpc_server_branch }} \
-            -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.arch.outputs.ARCH_TAG }}-${{ inputs.image_tag }} \
-            -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.arch.outputs.ARCH_TAG }}-latest \
+            -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ steps.arch.outputs.ARCH_TAG }}:${{ inputs.image_tag }} \
+            -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ steps.arch.outputs.ARCH_TAG }}:latest \
             .
 
       - name: Push Docker image
