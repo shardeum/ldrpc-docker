@@ -48,6 +48,16 @@ The configuration is done through environment variables when running the contain
 - `COLLECTOR_PUBKEY`: Your collector public key - should be generated using the following instructions
 - `COLLECTOR_SECRETKEY`: Your collector secret key - should be generated using the following instructions
 
+### Volumes
+
+If you want to persist the data between runs, you can mount volumes for the database directories:
+```
+  -v shardeum_db:/app/shardeum/db \
+  -v relayer_collector_db:/app/relayer-collector/db \
+```
+
+You might run into issues syncing after restarting the container while using volumes. If you do, you can try running the data patcher to fix the issues. Check out [Troubleshooting](#troubleshooting) for more information.
+
 ## Keys
 You will need to generate a collector public and secret key. The public key you will need to provide to the shardeum representative.
 To generate collector public and secret keys, you can generate them using the following commands:
@@ -76,11 +86,28 @@ docker build -f Dockerfile \
   -t shardeum-jsonrpc-ld-all-test .
 ```
 
-## Debugging
+## Troubleshooting
+
+### Debugging
 you can attach to the container and check list out the services and their status with `pm2`
 ```bash
 $ docker exec -it $(docker ps --format '{{.Names}}' --filter ancestor=ghcr.io/shardeum/shardeum-jsonrpc-ld-docker-amd64:latest) /bin/bash
 root@b903ee67f879:/app$ pm2 list
+```
+
+### Data Patcher
+If you run into issues with the cycle counter mismatch, you will see the following error:
+```bash
+collector-api-server  | Error: The last stored cycle counter does not match with the last stored cycle count! Patch the missing cycle data and start the server again!
+```
+
+You will need to provide the start cycle number to repair from. You can find the start cycle from the logs.
+
+To fix this, you can run the following command:
+```bash
+$ docker exec -it $(docker ps --format '{{.Names}}' --filter ancestor=ghcr.io/shardeum/shardeum-jsonrpc-ld-docker-amd64:latest) /bin/bash
+root@b903ee67f879:/app$ cd relayer-collector
+root@b903ee67f879:/app/relayer-collector$ npx --yes tsx scripts/repair_missing_cycle_block.ts <start-cycle>
 ```
 
 ## Github actions publishing
