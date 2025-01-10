@@ -30,7 +30,7 @@ docker run -p 8080:8080 -it \
   -e COLLECTOR_MODE='MQ' \
   -e RMQ_HOST=<rmq-host> \
   -e RMQ_PORT=<rmq-port> \
-  -e RMQ_PROTOCOL=<rmq-protocol> \
+  -e RMQ_PROTOCOL='amqp' \
   -e RMQ_USER=<rmq-user> \
   -e RMQ_PASS=<rmq-pass> \
   -e RMQ_CYCLES_QUEUE_NAME=<rmq-cycles-queue-name> \
