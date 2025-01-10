@@ -6,19 +6,19 @@ on:
       shardeum_branch:
         description: 'Shardeum repository branch'
         required: true
-        default: 'itn4-1.16.3'
+        default: 'dev'
       relayer_collector_branch:
         description: 'Relayer collector repository branch'
         required: true
-        default: 'itn4'
+        default: 'dev'
       json_rpc_server_branch:
         description: 'JSON RPC server repository branch'
         required: true
-        default: 'itn4'
+        default: 'dev'
       image_tag:
         description: 'Docker image tag'
         required: true
-        default: 'itn4-1.16.3'
+        default: 'dev'
       push_latest:
         description: 'Push latest tag'
         type: boolean
