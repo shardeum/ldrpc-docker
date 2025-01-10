@@ -36,7 +36,7 @@ docker run -p 8080:8080 -it \
   -e RMQ_CYCLES_QUEUE_NAME=<rmq-cycles-queue-name> \
   -e RMQ_RECEIPTS_QUEUE_NAME=<rmq-receipts-queue-name> \
   -e RMQ_ORIGINAL_TXS_QUEUE_NAME=<rmq-original-txs-queue-name> \
-  ghcr.io/shardeum/ldrpc-docker-amd64:latest
+  ghcr.io/shardeum/ldrpc-docker:itn4-1.16.3
 ```
 
 2. The JSON-RPC server will be available at `http://localhost:8080`
@@ -79,7 +79,7 @@ You will need to generate a collector public and secret key. The public key you 
 To generate collector public and secret keys, you can generate them using the following commands:
 
 ```bash
-$ docker run -it ghcr.io/shardeum/ldrpc-docker-amd64:latest /bin/bash
+$ docker run -it ghcr.io/shardeum/ldrpc-docker:itn4-1.16.3 /bin/bash
 root@b903ee67f879:/app$ cd shardeum/
 root@b903ee67f879:/app/shardeum$ node scripts/generateWallet.js 
 Public Key: <your-collector-pubkey>
@@ -107,7 +107,7 @@ docker build -f Dockerfile \
 ### Debugging
 you can attach to the container and check list out the services and their status with `pm2`
 ```bash
-$ docker exec -it $(docker ps --format '{{.Names}}' --filter ancestor=ghcr.io/shardeum/ldrpc-docker-amd64:latest) /bin/bash
+$ docker exec -it $(docker ps --format '{{.Names}}' --filter ancestor=ghcr.io/shardeum/ldrpc-docker:itn4-1.16.3) /bin/bash
 root@b903ee67f879:/app$ pm2 list
 ```
 
