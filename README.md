@@ -49,22 +49,23 @@ $ curl -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","met
 
 ## Run Configuration
 
-The configuration is done through environment variables when running the container:
-- `ARCHIVER_IP`: IP address of the archiver - should be provided by a shardeum representative
-- `ARCHIVER_PUBKEY`: Public key of the archiver - should be provided by a shardeum representative
-- `DISTRIBUTOR_IP`: IP address of the distributor - should be provided by a shardeum representative
-- `DISTRIBUTOR_PUBKEY`: Public key of the distributor - should be provided by a shardeum representative
-- `COLLECTOR_PUBKEY`: Your collector public key - should be generated using the following instructions
-- `COLLECTOR_SECRETKEY`: Your collector secret key - should be generated using the following instructions
-- `COLLECTOR_MODE`: Mode of the collector - should be `MQ`
-- `RMQ_HOST`: Host of the RabbitMQ server - should be provided by a shardeum representative
-- `RMQ_PORT`: Port of the RabbitMQ server - should be provided by a shardeum representative
-- `RMQ_PROTOCOL`: Protocol of the RabbitMQ server - should be provided by a shardeum representative
-- `RMQ_USER`: User of the RabbitMQ server - should be provided by a shardeum representative
-- `RMQ_PASS`: Password of the RabbitMQ server - should be provided by a shardeum representative
-- `RMQ_CYCLES_QUEUE_NAME`: Name of the cycles queue - should be provided by a shardeum representative
-- `RMQ_RECEIPTS_QUEUE_NAME`: Name of the receipts queue - should be provided by a shardeum representative
-- `RMQ_ORIGINAL_TXS_QUEUE_NAME`: Name of the original transactions queue - should be provided by a shardeum representative
+The configuration is done through environment variables when running the container. These values should be provided by your shardeum representative:
+
+- `ARCHIVER_IP`: IP address of the archiver
+- `ARCHIVER_PUBKEY`: Public key of the archiver
+- `DISTRIBUTOR_IP`: IP address of the distributor
+- `DISTRIBUTOR_PUBKEY`: Public key of the distributor
+- `COLLECTOR_PUBKEY`: Your collector public key
+- `COLLECTOR_SECRETKEY`: Your collector secret key
+- `COLLECTOR_MODE`: Mode of the collector - use `MQ`, WS is deprecated 
+- `RMQ_HOST`: Host of the RabbitMQ server
+- `RMQ_PORT`: Port of the RabbitMQ server
+- `RMQ_PROTOCOL`: Protocol of the RabbitMQ server
+- `RMQ_USER`: User of the RabbitMQ server
+- `RMQ_PASS`: Password of the RabbitMQ server
+- `RMQ_CYCLES_QUEUE_NAME`: Name of the cycles queue
+- `RMQ_RECEIPTS_QUEUE_NAME`: Name of the receipts queue
+- `RMQ_ORIGINAL_TXS_QUEUE_NAME`: Name of the original transactions queue
 
 ### Volumes
 
