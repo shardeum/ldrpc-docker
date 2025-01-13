@@ -17,8 +17,10 @@ You will need to have an archiver and distributor running somewhere. These confi
 
 ## Usage
 
-1. Run the docker container with environment variables:
+1. Pull Run the docker container with environment variables:
 ```bash
+docker pull ghcr.io/shardeum/ldrpc-docker
+
 docker run -p 8080:8080 -it \
   -v shardeum_db:/app/shardeum/db \
   -v relayer_collector_db:/app/relayer-collector/db \
@@ -38,7 +40,7 @@ docker run -p 8080:8080 -it \
   -e RMQ_CYCLES_QUEUE_NAME=<rmq-cycles-queue-name> \
   -e RMQ_RECEIPTS_QUEUE_NAME=<rmq-receipts-queue-name> \
   -e RMQ_ORIGINAL_TXS_QUEUE_NAME=<rmq-original-txs-queue-name> \
-  ghcr.io/shardeum/ldrpc-docker:itn4-1.16.3
+  ghcr.io/shardeum/ldrpc-docker
 ```
 
 2. The JSON-RPC server will be available at `http://localhost:8080`
