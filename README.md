@@ -20,6 +20,8 @@ You will need to have an archiver and distributor running somewhere. These confi
 1. Run the docker container with environment variables:
 ```bash
 docker run -p 8080:8080 -it \
+  -v shardeum_db:/app/shardeum/db \
+  -v relayer_collector_db:/app/relayer-collector/db \
   -e ARCHIVER_IP=<archiver-ip> \
   -e ARCHIVER_PORT=<archiver-port> \
   -e ARCHIVER_PUBKEY=<archiver-pubkey> \
