@@ -1,5 +1,9 @@
 name: Build and Push Docker Image
 
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
 on:
   workflow_dispatch:
     inputs:
@@ -27,42 +31,30 @@ on:
   pull_request:
     branches: [ main ]
 
-env:
-  REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+permissions:
+  contents: read
+  packages: write
 
 jobs:
-  build-and-push:
-    runs-on: ubuntu-latest
-    timeout-minutes: 120
-    permissions:
-      contents: read
-      packages: write
-      pull-requests: write
-
+  build:
+    strategy:
+      matrix:
+        include:
+          - arch: amd64
+            runner: ubuntu-latest
+          - arch: arm64
+            runner: macos-14
+    runs-on: ${{ matrix.runner }}
+    
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-
+      - uses: actions/checkout@v4
+      
       - name: Log in to the Container registry
         uses: docker/login-action@v3
         with:
           registry: ${{ env.REGISTRY }}
           username: ${{ github.actor }}
           password: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Determine architecture
-        id: arch
-        run: |
-          ARCH=$(uname -m)
-          if [ "$ARCH" == "aarch64" ] || [ "$ARCH" == "arm64" ]; then
-            echo "ARCH_TAG=arm64" >> $GITHUB_OUTPUT
-          elif [ "$ARCH" == "x86_64" ]; then
-            echo "ARCH_TAG=amd64" >> $GITHUB_OUTPUT
-          else
-            echo "Unsupported architecture: $ARCH. Exiting."
-            exit 1
-          fi
 
       - name: Set build args and tags
         id: build_config
@@ -78,49 +70,45 @@ jobs:
             echo "JSON_RPC_SERVER_BRANCH=${{ inputs.json_rpc_server_branch }}" >> $GITHUB_OUTPUT
             echo "IMAGE_TAG=${{ inputs.image_tag }}" >> $GITHUB_OUTPUT
           fi
-
+      
       - name: Build Docker image
         run: |
-          TAGS="-t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ steps.arch.outputs.ARCH_TAG }}:${{ steps.build_config.outputs.IMAGE_TAG }}"
-          if [ "${{ github.event_name }}" == "workflow_dispatch" ] && [ "${{ inputs.push_latest }}" == "true" ]; then
-            TAGS="$TAGS -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ steps.arch.outputs.ARCH_TAG }}:latest"
-          fi
           docker build \
             --build-arg SHARDEUM_BRANCH=${{ steps.build_config.outputs.SHARDEUM_BRANCH }} \
             --build-arg RELAYER_COLLECTOR_BRANCH=${{ steps.build_config.outputs.RELAYER_COLLECTOR_BRANCH }} \
             --build-arg JSON_RPC_SERVER_BRANCH=${{ steps.build_config.outputs.JSON_RPC_SERVER_BRANCH }} \
-            $TAGS \
+            -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ matrix.arch }}:${{ steps.build_config.outputs.IMAGE_TAG }} \
             .
 
       - name: Push Docker image
         run: |
-          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ steps.arch.outputs.ARCH_TAG }}:${{ steps.build_config.outputs.IMAGE_TAG }}
+          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ matrix.arch }}:${{ steps.build_config.outputs.IMAGE_TAG }}
           if [ "${{ github.event_name }}" == "workflow_dispatch" ] && [ "${{ inputs.push_latest }}" == "true" ]; then
-            docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ steps.arch.outputs.ARCH_TAG }}:latest
+            docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ matrix.arch }}:${{ steps.build_config.outputs.IMAGE_TAG }} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ matrix.arch }}:latest
+            docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ matrix.arch }}:latest
           fi
 
-      - name: Comment PR with Docker instructions
-        if: github.event_name == 'pull_request'
-        uses: actions/github-script@v6
+  create-manifest:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
         with:
-          script: |
-            const imageTag = 'pr-preview-${{ github.event.pull_request.number }}';
-            const comment = `
-            ### 🐳 Docker Image Preview Available
-            
-            You can test this PR using the following Docker image:
-            
-            \`\`\`bash
-            docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ steps.arch.outputs.ARCH_TAG }}:${imageTag}
-            docker run -it ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ steps.arch.outputs.ARCH_TAG }}:${imageTag}
-            \`\`\`
-            
-            > Note: This image was built for ${{ steps.arch.outputs.ARCH_TAG }} architecture
-            `;
-            
-            github.rest.issues.createComment({
-              issue_number: context.issue.number,
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              body: comment
-            });
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Create and push manifest
+        run: |
+          docker manifest create ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.build_config.outputs.IMAGE_TAG }} \
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-amd64:${{ steps.build_config.outputs.IMAGE_TAG }} \
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-arm64:${{ steps.build_config.outputs.IMAGE_TAG }}
+          docker manifest push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.build_config.outputs.IMAGE_TAG }}
+          
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ] && [ "${{ inputs.push_latest }}" == "true" ]; then
+            docker manifest create ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest \
+              ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-amd64:latest \
+              ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-arm64:latest
+            docker manifest push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+          fi
