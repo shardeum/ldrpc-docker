@@ -43,7 +43,7 @@ jobs:
           - arch: amd64
             runner: ubuntu-latest
           - arch: arm64
-            runner: macos-14
+            runner: macos-13
     runs-on: ${{ matrix.runner }}
     
     steps:
@@ -53,7 +53,7 @@ jobs:
         if: matrix.runner == 'macos-14'
         run: |
           brew install docker colima
-          colima start
+          colima start --vm-type qemu
           sleep 30
       
       - name: Log in to the Container registry
