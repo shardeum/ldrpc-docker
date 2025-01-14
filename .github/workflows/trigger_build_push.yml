@@ -48,7 +48,9 @@ jobs:
     
     steps:
       - uses: actions/checkout@v4
-      - uses: douglascamata/setup-docker-macos-action@v1-alpha.15
+
+      - if: matrix.runner == 'macos-13'
+        uses: douglascamata/setup-docker-macos-action@v1-alpha.15
       
       - name: Log in to the Container registry
         uses: docker/login-action@v3
