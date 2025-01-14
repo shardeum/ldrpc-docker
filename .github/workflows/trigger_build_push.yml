@@ -50,7 +50,7 @@ jobs:
       - uses: actions/checkout@v4
       
       - name: Set up Docker for macOS
-        if: matrix.runner == 'macos-14'
+        if: matrix.runner == 'macos-13'
         run: |
           brew install docker colima
           colima start --vm-type qemu
