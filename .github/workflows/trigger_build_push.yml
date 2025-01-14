@@ -49,6 +49,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       
+      - name: Set up Docker for macOS
+        if: matrix.runner == 'macos-14'
+        run: |
+          brew install docker colima
+          colima start --arch aarch64 --memory 4 --cpu 4
+          sleep 30
+      
       - name: Log in to the Container registry
         uses: docker/login-action@v3
         with:
