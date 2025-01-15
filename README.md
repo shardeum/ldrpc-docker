@@ -51,6 +51,10 @@ $ curl -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","met
 {"jsonrpc":"2.0","id":1,"result":"0x1f92"}
 ```
 
+#### Demo syncing a small devnet
+
+https://github.com/user-attachments/assets/77efc123-38c1-4965-96fc-1f1d0dec314d
+
 ## Run Configuration
 
 The configuration is done through environment variables when running the container. These values should be provided by your shardeum representative:
