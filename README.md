@@ -53,14 +53,7 @@ $ curl -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","met
 
 #### Demo syncing a small devnet
 
-
-
 https://github.com/user-attachments/assets/77efc123-38c1-4965-96fc-1f1d0dec314d
-
-
-
-
-
 
 ## Run Configuration
 
