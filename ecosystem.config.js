@@ -9,13 +9,13 @@ module.exports = {
     {
       name: 'collector-server',
       cwd: '/app/relayer-collector',
-      script: 'dist/src/server.js',
+      script: 'dist/src/collector.js',
       node_args: '--max_old_space_size=16000'
     },
     {
       name: 'collector-api-server',
       cwd: '/app/relayer-collector',
-      script: 'dist/src/collector.js',
+      script: 'dist/src/server.js',
       node_args: '--max_old_space_size=16000'
     },
     {
