@@ -41,17 +41,14 @@ jobs:
       matrix:
         include:
           - arch: amd64
-            runner: ubuntu-latest
+            runner: [self-hosted, Linux, X64]
           - arch: arm64
-            runner: macos-13
+            runner: [self-hosted, Linux, ARM64]
     runs-on: ${{ matrix.runner }}
     
     steps:
       - uses: actions/checkout@v4
 
-      - if: matrix.runner == 'macos-13'
-        uses: douglascamata/setup-docker-macos-action@v1-alpha.15
-      
       - name: Log in to the Container registry
         uses: docker/login-action@v3
         with:
