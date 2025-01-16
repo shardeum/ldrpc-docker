@@ -8,9 +8,6 @@ apt-get update && apt-get install -y \
     python3 \
     && rm -rf /var/lib/apt/lists/*
 
-# Install node-gyp
-npm install -g node-gyp@9.4.0
-
 # Install Rust 1.74.1
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain 1.74.1
 source $HOME/.cargo/env
@@ -22,4 +19,3 @@ npm --version
 python3 --version
 rustc --version
 cargo --version
-node-gyp --version
