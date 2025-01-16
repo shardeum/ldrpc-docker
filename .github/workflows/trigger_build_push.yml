@@ -95,6 +95,15 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - name: Set image tag
+        id: build_config
+        run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            echo "IMAGE_TAG=pr-preview-${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
+          else
+            echo "IMAGE_TAG=${{ inputs.image_tag }}" >> $GITHUB_OUTPUT
+          fi
+
       - name: Log in to the Container registry
         uses: docker/login-action@v3
         with:
