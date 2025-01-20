@@ -74,6 +74,7 @@ jobs:
       - name: Build Docker image
         run: |
           docker build \
+            --no-cache \
             --platform linux/${{ matrix.arch }} \
             --build-arg SHARDEUM_BRANCH=${{ steps.build_config.outputs.SHARDEUM_BRANCH }} \
             --build-arg RELAYER_COLLECTOR_BRANCH=${{ steps.build_config.outputs.RELAYER_COLLECTOR_BRANCH }} \
