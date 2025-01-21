@@ -22,8 +22,8 @@ You will need to have an archiver and distributor running somewhere. These confi
 docker pull ghcr.io/shardeum/ldrpc-docker
 
 docker run -p 8080:8080 -it \
-  -v shardeum_db:/app/shardeum/db \
-  -v relayer_collector_db:/app/relayer-collector/db \
+  -v shardeum_db:/home/shardeum/shardeum/db \
+  -v relayer_collector_db:/home/shardeum/relayer-collector/db \
   -e ARCHIVER_IP=<archiver-ip> \
   -e ARCHIVER_PORT=<archiver-port> \
   -e ARCHIVER_PUBKEY=<archiver-pubkey> \
@@ -79,8 +79,8 @@ The configuration is done through environment variables when running the contain
 
 If you want to persist the data between runs, you can mount volumes for the database directories:
 ```
-  -v shardeum_db:/app/shardeum/db \
-  -v relayer_collector_db:/app/relayer-collector/db \
+  -v shardeum_db:/home/shardeum/shardeum/db \
+  -v relayer_collector_db:/home/shardeum/relayer-collector/db \
 ```
 
 ## Keys
