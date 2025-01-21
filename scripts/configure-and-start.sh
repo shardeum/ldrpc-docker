@@ -13,7 +13,8 @@ jq --arg ip "$DISTRIBUTOR_IP" \
    --arg dkey "$DISTRIBUTOR_PUBKEY" \
    --arg ckey "$COLLECTOR_PUBKEY" \
    --arg skey "$COLLECTOR_SECRETKEY" \
-   '.distributorInfo.ip |= $ip | .distributorInfo.publicKey |= $dkey | .collectorInfo.publicKey |= $ckey | .collectorInfo.secretKey |= $skey | .dataLogWrite = false' \
+   --arg mode "$COLLECTOR_MODE" \
+   '.distributorInfo.ip |= $ip | .distributorInfo.publicKey |= $dkey | .collectorInfo.publicKey |= $ckey | .collectorInfo.secretKey |= $skey | .dataLogWrite = ($mode != "MQ")' \
    config.json > temp.json && mv temp.json config.json
 
 export SERVICE_VALIDATOR_DB_PATH=/app/shardeum/db/shardeum.sqlite
