@@ -17,7 +17,6 @@ jq --arg ip "$DISTRIBUTOR_IP" \
    '.distributorInfo.ip |= $ip | .distributorInfo.publicKey |= $dkey | .collectorInfo.publicKey |= $ckey | .collectorInfo.secretKey |= $skey | .dataLogWrite = ($mode != "MQ")' \
    config.json > temp.json && mv temp.json config.json
 
-
 export SERVICE_VALIDATOR_DB_PATH=/app/shardeum/db/shardeum.sqlite
 mkdir -p db
 export COLLECTOR_DB_PATH=/app/relayer-collector/db/db.sqlite3
