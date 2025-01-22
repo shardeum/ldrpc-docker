@@ -13,7 +13,7 @@ ENV JSON_RPC_SERVER_BRANCH=${JSON_RPC_SERVER_BRANCH}
 ENV DEBIAN_FRONTEND=noninteractive
 
 # Create non-root user and set up directories
-RUN groupadd -r shardeum && useradd -r -g shardeum -m -s /bin/bash shardeum && \
+RUN groupadd -r shardeum && useradd -r -g shardeum -m shardeum && \
     mkdir -p /home/shardeum/.npm-global && \
     chown -R shardeum:shardeum /home/shardeum
 
