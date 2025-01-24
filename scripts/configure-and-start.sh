@@ -1,5 +1,30 @@
 #!/bin/bash
 
+# Check for required environment variables
+required_vars=(
+  ARCHIVER_IP
+  ARCHIVER_PORT
+  ARCHIVER_PUBKEY
+  DISTRIBUTOR_IP
+  DISTRIBUTOR_PUBKEY
+  COLLECTOR_PUBKEY
+  COLLECTOR_SECRETKEY
+  COLLECTOR_MODE
+)
+
+missing_vars=()
+for var in "${required_vars[@]}"; do
+  if [ -z "${!var}" ]; then
+    missing_vars+=("$var")
+  fi
+done
+
+if [ ${#missing_vars[@]} -gt 0 ]; then
+  echo "ERROR: Missing required environment variables:"
+  printf '%s\n' "${missing_vars[@]}"
+  exit 1
+fi
+
 # Configure Service validator
 cd /home/shardeum/shardeum
 jq ".server.p2p.existingArchivers[].ip |= \"$ARCHIVER_IP\"" config.json > tmp.json && mv tmp.json config.json
