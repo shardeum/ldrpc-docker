@@ -62,7 +62,4 @@ EXPOSE 8080 9001 10001 4000 6100 4446 6101
 COPY scripts/configure-and-start.sh /home/shardeum/
 COPY scripts/run-litestream.sh /home/shardeum/
 
-# Make scripts executable
-RUN chmod +x /home/shardeum/configure-and-start.sh /home/shardeum/run-litestream.sh
-
 CMD ["/home/shardeum/configure-and-start.sh"]
