@@ -21,7 +21,7 @@ You will need to have an archiver and distributor running somewhere. These confi
 ```bash
 docker pull ghcr.io/shardeum/ldrpc-docker
 
-docker run -p 8080:8080 -it \
+docker run -p 8080:8080 -p 6101:6101 -it \
   -v shardeum_db:/home/shardeum/shardeum/db \
   -v relayer_collector_db:/home/shardeum/relayer-collector/db \
   -e ARCHIVER_IP=<archiver-ip> \
@@ -88,7 +88,7 @@ You will need to generate a collector public and secret key. The public key you 
 To generate collector public and secret keys, you can generate them using the following commands:
 
 ```bash
-$ docker run -it ghcr.io/shardeum/ldrpc-docker:itn4-1.16.3 /bin/bash
+$ docker run -it ghcr.io/shardeum/ldrpc-docker /bin/bash
 root@b903ee67f879:/app$ cd shardeum/
 root@b903ee67f879:/app/shardeum$ node scripts/generateWallet.js 
 Public Key: <your-collector-pubkey>
