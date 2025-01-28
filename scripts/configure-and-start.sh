@@ -59,5 +59,10 @@ sed -i "s|collectorApiServerUrl: 'http[^']*'|collectorApiServerUrl: 'http://0.0.
 sed -i "s/serveSubscriptions: Boolean(process.env.WS_SAVE_SUBSCRIPTIONS) || false/serveSubscriptions: Boolean(process.env.WS_SAVE_SUBSCRIPTIONS) || true/" src/config.ts
 npm run compile
 
+cd /home/shardeum/
+
+# Sync litestream
+./run-litestream.sh
+
 # Start services
-cd /home/shardeum && pm2 start ecosystem.config.js && pm2 logs
+pm2 start ecosystem.config.js && pm2 logs

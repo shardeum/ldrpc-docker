@@ -25,7 +25,7 @@ RUN apt-get update && apt-get install -y jq \
     build-essential \
     curl \
     git \
-    python3
+    python3 
 
 # Switch to non-root user for npm global install
 USER shardeum
@@ -36,6 +36,20 @@ ENV PATH="/home/shardeum/.npm-global/bin:/home/shardeum/.cargo/bin:${PATH}"
 # Install global npm packages
 RUN npm install -g pm2
 
+RUN mkdir -p /home/shardeum/bin
+ENV PATH="/home/shardeum/bin:${PATH}"
+
+
+# Install litestream using pre-built binary
+RUN case $(uname -m) in \
+    x86_64) ARCH="amd64" ;; \
+    aarch64) ARCH="arm64" ;; \
+    *) echo "Unsupported architecture" && exit 1 ;; \
+    esac && \
+    curl -L https://github.com/benbjohnson/litestream/releases/download/v0.3.13/litestream-v0.3.13-linux-${ARCH}.tar.gz -o litestream.tar.gz && \
+    tar xzf litestream.tar.gz && \
+    mv litestream /home/shardeum/bin/ && \
+    rm litestream.tar.gz
 # Copy and run install script
 COPY scripts/install.sh .
 RUN ./install.sh
