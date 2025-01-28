@@ -13,14 +13,31 @@ This docker container is meant to run all the services in the right dotted box o
 ### Archiver and distributor
 You will need to have an archiver and distributor running somewhere. These configs will be provided by a shardeum representative or if you need to run a local devnet you can follow [these instructions](https://github.com/shardeum/shardeum?tab=readme-ov-file#installation) to run `shardus start 10` as well as boot a [distributor](https://github.com/shardeum/relayer-distributor) in MQ mode following the instructions as well.
 
-- Docker
+## Instalation
 
-## Usage
-
-1. Pull Run the docker container with environment variables:
+Pulll the JSON-RPC server image:
 ```bash
 docker pull ghcr.io/shardeum/ldrpc-docker
+```
 
+## Keys
+
+You will need to generate a collector public and secret key. The public key you will need to provide to the shardeum representative.
+To generate collector public and secret keys, you can generate them using the following commands:
+
+```bash
+$ docker run -it ghcr.io/shardeum/ldrpc-docker /bin/bash
+root@b903ee67f879:/app$ cd shardeum/
+root@b903ee67f879:/app/shardeum$ node scripts/generateWallet.js 
+Public Key: <your-collector-pubkey>
+Secret Key: <your-collector-secretkey>
+```
+
+## Run the service
+
+Run the service, replacing the env variables below like `<archiver-ip>` with the values provided to you by your contact at Shardeum
+
+```bash
 docker run -p 8080:8080 -p 6101:6101 -it \
   -v shardeum_db:/home/shardeum/shardeum/db \
   -v relayer_collector_db:/home/shardeum/relayer-collector/db \
@@ -43,8 +60,9 @@ docker run -p 8080:8080 -p 6101:6101 -it \
   ghcr.io/shardeum/ldrpc-docker
 ```
 
-2. The JSON-RPC server will be available at `http://localhost:8080`
-3. You can now curl it: 
+## Testing the service
+
+The JSON-RPC server will be available at `http://localhost:8080` and you can now test it with curl: 
 ```bash
 $ curl -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}' http://localhost:8080
 
@@ -81,18 +99,6 @@ If you want to persist the data between runs, you can mount volumes for the data
 ```
   -v shardeum_db:/home/shardeum/shardeum/db \
   -v relayer_collector_db:/home/shardeum/relayer-collector/db \
-```
-
-## Keys
-You will need to generate a collector public and secret key. The public key you will need to provide to the shardeum representative.
-To generate collector public and secret keys, you can generate them using the following commands:
-
-```bash
-$ docker run -it ghcr.io/shardeum/ldrpc-docker /bin/bash
-root@b903ee67f879:/app$ cd shardeum/
-root@b903ee67f879:/app/shardeum$ node scripts/generateWallet.js 
-Public Key: <your-collector-pubkey>
-Secret Key: <your-collector-secretkey>
 ```
 
 ## Build Configuration
