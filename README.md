@@ -98,8 +98,8 @@ The configuration is done through environment variables when running the contain
 
 If you want to persist the data between runs, you can mount volumes for the database directories:
 ```
-  -v shardeum_db:/home/shardeum/shardeum/db \
-  -v relayer_collector_db:/home/shardeum/relayer-collector/db \
+  -v shardeum_db:/home/node/shardeum/db \
+  -v relayer_collector_db:/home/node/relayer-collector/db \
 ```
 
 ## Build Configuration
@@ -131,3 +131,31 @@ root@b903ee67f879:/app$ pm2 list
 You can make builds and publish them via the github actions in this repository. It has inputs to the workflow that get passed to the build args for docker, and wether or not to publish to latest or not.
 
 ![image](https://github.com/user-attachments/assets/8038709b-d343-4f67-b51c-514f11019fda)
+
+
+## Google Cloud account set up for litestream
+
+`gcloud auth application-default login`
+
+docker run -p 8080:8080 -it \
+  -v ./shardeum_db/:/home/node/shardeum/db \
+  -v ./relayer_collector_db/:/home/node/relayer-collector/db \
+  -v ~/.config/gcloud:/home/node/.config/gcloud \
+  -e ARCHIVER_IP \
+  -e ARCHIVER_PORT \
+  -e ARCHIVER_PUBKEY \
+  -e DISTRIBUTOR_IP \
+  -e DISTRIBUTOR_PUBKEY \
+  -e COLLECTOR_PUBKEY \
+  -e COLLECTOR_SECRETKEY \
+  -e COLLECTOR_MODE \
+  -e RMQ_HOST \
+  -e RMQ_PORT \
+  -e RMQ_PROTOCOL \
+  -e RMQ_USER \
+  -e RMQ_PASS \
+  -e RMQ_CYCLES_QUEUE_NAME \
+  -e RMQ_RECEIPTS_QUEUE_NAME \
+  -e RMQ_ORIGINAL_TXS_QUEUE_NAME \
+    docker-ldrpc-test
+
