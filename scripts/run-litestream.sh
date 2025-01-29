@@ -1,3 +1,4 @@
+export GOOGLE_APPLICATION_CREDENTIALS="/home/node/dummy.json"
 
 # if we have a collector database already dont litestream restore it
 if [ ! -f "$COLLECTOR_DB_PATH" ]; then
