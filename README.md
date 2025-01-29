@@ -38,9 +38,10 @@ Secret Key: <your-collector-secretkey>
 Run the service, replacing the env variables below like `<archiver-ip>` with the values provided to you by your contact at Shardeum
 
 ```bash
-docker run -p 8080:8080 -p 6101:6101 -it \
+docker run -p 8080:8080 -p 6101:6101 -d \
   -v shardeum_db:/home/shardeum/shardeum/db \
   -v relayer_collector_db:/home/shardeum/relayer-collector/db \
+  -v logs:/home/shardeum/.pm2/logs \
   -e ARCHIVER_IP=<archiver-ip> \
   -e ARCHIVER_PORT=<archiver-port> \
   -e ARCHIVER_PUBKEY=<archiver-pubkey> \
