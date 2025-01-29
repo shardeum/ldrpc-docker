@@ -13,9 +13,9 @@ This docker container is meant to run all the services in the right dotted box o
 ### Archiver and distributor
 You will need to have an archiver and distributor running somewhere. These configs will be provided by a shardeum representative or if you need to run a local devnet you can follow [these instructions](https://github.com/shardeum/shardeum?tab=readme-ov-file#installation) to run `shardus start 10` as well as boot a [distributor](https://github.com/shardeum/relayer-distributor) in MQ mode following the instructions as well.
 
-## Instalation
+## Installation
 
-Pulll the JSON-RPC server image:
+Pull the JSON-RPC server image:
 ```bash
 docker pull ghcr.io/shardeum/ldrpc-docker
 ```
@@ -39,9 +39,9 @@ Run the service, replacing the env variables below like `<archiver-ip>` with the
 
 ```bash
 docker run -p 8080:8080 -p 6101:6101 -d \
-  -v shardeum_db:/home/shardeum/shardeum/db \
-  -v relayer_collector_db:/home/shardeum/relayer-collector/db \
-  -v logs:/home/shardeum/.pm2/logs \
+  -v shardeum_db:/home/node/shardeum/db \
+  -v relayer_collector_db:/home/node/relayer-collector/db \
+  -v logs:/home/node/.pm2/logs \
   -e ARCHIVER_IP=<archiver-ip> \
   -e ARCHIVER_PORT=<archiver-port> \
   -e ARCHIVER_PUBKEY=<archiver-pubkey> \
