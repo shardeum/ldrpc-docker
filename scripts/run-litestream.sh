@@ -1,4 +1,7 @@
-export GOOGLE_APPLICATION_CREDENTIALS="/home/node/dummy.json"
+
+# convert base64 to json
+cat /home/node/dummy.json | base64 --decode > /home/node/dummy_creds.json
+export GOOGLE_APPLICATION_CREDENTIALS="/home/node/dummy_creds.json"
 
 # if we have a collector database already dont litestream restore it
 if [ ! -f "$COLLECTOR_DB_PATH" ]; then
