@@ -60,8 +60,11 @@ npm run compile
 
 cd /home/node/
 
-# Sync litestream
-./run-litestream.sh
+# Sync litestream and dont start if it exits with an error
+if ! ./run-litestream.sh; then
+  echo "Failed to sync litestream. Exiting early."
+  exit 1
+fi
 
 # Start services
 pm2 start ecosystem.config.js && pm2 logs
