@@ -34,16 +34,6 @@ RUN npm install -g pm2
 RUN mkdir -p /home/node/bin
 ENV PATH="/home/node/bin:${PATH}"
 
-# Install litestream using pre-built binary
-RUN case $(uname -m) in \
-    x86_64) ARCH="amd64" ;; \
-    aarch64) ARCH="arm64" ;; \
-    *) echo "Unsupported architecture" && exit 1 ;; \
-    esac && \
-    curl -L https://github.com/benbjohnson/litestream/releases/download/v0.3.13/litestream-v0.3.13-linux-${ARCH}.tar.gz -o litestream.tar.gz && \
-    tar xzf litestream.tar.gz && \
-    mv litestream /home/node/bin/ && \
-    rm litestream.tar.gz
 # Copy and run install script
 COPY scripts/install.sh .
 RUN ./install.sh
@@ -70,7 +60,7 @@ EXPOSE 8080 9001 10001 4000 6100 4446 6101
 
 # Configure services at runtime using environment variables
 COPY scripts/configure-and-start.sh /home/node/
-COPY scripts/run-litestream.sh /home/node/
+COPY scripts/run-backup.sh /home/node/
 COPY scripts/dummy.json /home/node/
 
 CMD ["/home/node/configure-and-start.sh"]

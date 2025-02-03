@@ -60,9 +60,9 @@ npm run compile
 
 cd /home/node/
 
-# Sync litestream and dont start if it exits with an error
-if ! ./run-litestream.sh; then
-  echo "Failed to sync litestream. Exiting early."
+# Sync backup and dont start if it exits with an error
+if ! ./run-backup.sh; then
+  echo "Failed to sync backup. Exiting early."
   exit 1
 fi
 

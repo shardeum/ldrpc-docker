@@ -20,13 +20,6 @@ Pull the JSON-RPC server image:
 docker pull ghcr.io/shardeum/ldrpc-docker
 ```
 
-## Set up Google Cloud account on host machine
-
-`gcloud auth application-default login`
-
-this will be used to restore the litestream databases from GCS
-
-
 ## Keys
 
 You will need to generate a collector public and secret key. The public key you will need to provide to the shardeum representative.
