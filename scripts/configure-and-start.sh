@@ -6,6 +6,7 @@ required_vars=(
   ARCHIVER_PORT
   ARCHIVER_PUBKEY
   DISTRIBUTOR_IP
+  DISTRIBUTOR_PORT
   DISTRIBUTOR_PUBKEY
   COLLECTOR_PUBKEY
   COLLECTOR_SECRETKEY
@@ -36,11 +37,12 @@ npm run prepare
 # Configure Relayer Collector
 cd /home/node/relayer-collector
 jq --arg ip "$DISTRIBUTOR_IP" \
+   --arg port "$DISTRIBUTOR_PORT" \
    --arg dkey "$DISTRIBUTOR_PUBKEY" \
    --arg ckey "$COLLECTOR_PUBKEY" \
    --arg skey "$COLLECTOR_SECRETKEY" \
    --arg mode "$COLLECTOR_MODE" \
-   '.distributorInfo.ip |= $ip | .distributorInfo.publicKey |= $dkey | .collectorInfo.publicKey |= $ckey | .collectorInfo.secretKey |= $skey | .dataLogWrite = ($mode != "MQ")' \
+   '.distributorInfo.ip |= $ip | .distributorInfo.port |= $port | .distributorInfo.publicKey |= $dkey | .collectorInfo.publicKey |= $ckey | .collectorInfo.secretKey |= $skey | .dataLogWrite = ($mode != "MQ")' \
    config.json > temp.json && mv temp.json config.json
 
 export SERVICE_VALIDATOR_DB_PATH=/home/node/shardeum/db/shardeum.sqlite

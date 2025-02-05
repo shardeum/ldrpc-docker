@@ -46,6 +46,7 @@ docker run -p 8080:8080 -p 6101:6101 -d \
   -e ARCHIVER_PORT=<archiver-port> \
   -e ARCHIVER_PUBKEY=<archiver-pubkey> \
   -e DISTRIBUTOR_IP=<distributor-ip> \
+  -e DISTRIBUTOR_PORT=<distributor-port> \
   -e DISTRIBUTOR_PUBKEY=<distributor-pubkey> \
   -e COLLECTOR_PUBKEY=<your-collector-pubkey> \
   -e COLLECTOR_SECRETKEY=<your-collector-secretkey> \
@@ -81,6 +82,7 @@ The configuration is done through environment variables when running the contain
 - `ARCHIVER_IP`: IP address of the archiver
 - `ARCHIVER_PUBKEY`: Public key of the archiver
 - `DISTRIBUTOR_IP`: IP address of the distributor
+- `DISTRIBUTOR_PORT`: PORT address of the distributor
 - `DISTRIBUTOR_PUBKEY`: Public key of the distributor
 - `COLLECTOR_PUBKEY`: Your collector public key
 - `COLLECTOR_SECRETKEY`: Your collector secret key
