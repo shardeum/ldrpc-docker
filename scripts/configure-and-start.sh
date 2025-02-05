@@ -6,6 +6,7 @@ required_vars=(
   ARCHIVER_PORT
   ARCHIVER_PUBKEY
   DISTRIBUTOR_IP
+  DISTRIBUTOR_PORT
   DISTRIBUTOR_PUBKEY
   COLLECTOR_PUBKEY
   COLLECTOR_SECRETKEY
@@ -26,7 +27,7 @@ if [ ${#missing_vars[@]} -gt 0 ]; then
 fi
 
 # Configure Service validator
-cd /home/shardeum/shardeum
+cd /home/node/shardeum
 jq ".server.p2p.existingArchivers[].ip |= \"$ARCHIVER_IP\"" config.json > tmp.json && mv tmp.json config.json
 jq ".server.p2p.existingArchivers[].port |= \"$ARCHIVER_PORT\"" config.json > tmp.json && mv tmp.json config.json
 jq ".server.p2p.existingArchivers[].publicKey |= \"$ARCHIVER_PUBKEY\"" config.json > tmp.json && mv tmp.json config.json
@@ -34,22 +35,22 @@ sed -i "s/startInServiceMode: false/startInServiceMode: true/" src/shardeum/shar
 npm run prepare
 
 # Configure Relayer Collector
-cd /home/shardeum/relayer-collector
+cd /home/node/relayer-collector
 jq --arg ip "$DISTRIBUTOR_IP" \
+   --arg port "$DISTRIBUTOR_PORT" \
    --arg dkey "$DISTRIBUTOR_PUBKEY" \
    --arg ckey "$COLLECTOR_PUBKEY" \
    --arg skey "$COLLECTOR_SECRETKEY" \
    --arg mode "$COLLECTOR_MODE" \
-   '.distributorInfo.ip |= $ip | .distributorInfo.publicKey |= $dkey | .collectorInfo.publicKey |= $ckey | .collectorInfo.secretKey |= $skey | .dataLogWrite = ($mode != "MQ")' \
+   '.distributorInfo.ip |= $ip | .distributorInfo.port |= $port | .distributorInfo.publicKey |= $dkey | .collectorInfo.publicKey |= $ckey | .collectorInfo.secretKey |= $skey | .dataLogWrite = ($mode != "MQ")' \
    config.json > temp.json && mv temp.json config.json
 
-export SERVICE_VALIDATOR_DB_PATH=/home/shardeum/shardeum/db/shardeum.sqlite
-mkdir -p db
-export COLLECTOR_DB_PATH=/home/shardeum/relayer-collector/db/db.sqlite3
+export SERVICE_VALIDATOR_DB_PATH=/home/node/shardeum/db/shardeum.sqlite
+export COLLECTOR_DB_PATH=/home/node/relayer-collector/db/db.sqlite3
 npm run prepare
 
 # Configure JSON RPC Server
-cd /home/shardeum/json-rpc-server
+cd /home/node/json-rpc-server
 jq --arg ip "$ARCHIVER_IP" --arg key "$ARCHIVER_PUBKEY" \
    '.archivers[].ip |= $ip | .archivers[].publicKey |= $key' \
    archiverConfig.json > tmp.json && mv tmp.json archiverConfig.json
@@ -59,5 +60,13 @@ sed -i "s|collectorApiServerUrl: 'http[^']*'|collectorApiServerUrl: 'http://0.0.
 sed -i "s/serveSubscriptions: Boolean(process.env.WS_SAVE_SUBSCRIPTIONS) || false/serveSubscriptions: Boolean(process.env.WS_SAVE_SUBSCRIPTIONS) || true/" src/config.ts
 npm run compile
 
+cd /home/node/
+
+# Sync backup and dont start if it exits with an error
+if ! ./run-backup.sh; then
+  echo "Failed to sync backup. Exiting early."
+  exit 1
+fi
+
 # Start services
-cd /home/shardeum && pm2 start ecosystem.config.js && pm2 logs
+pm2 start ecosystem.config.js && pm2 logs

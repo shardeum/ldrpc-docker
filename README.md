@@ -13,9 +13,9 @@ This docker container is meant to run all the services in the right dotted box o
 ### Archiver and distributor
 You will need to have an archiver and distributor running somewhere. These configs will be provided by a shardeum representative or if you need to run a local devnet you can follow [these instructions](https://github.com/shardeum/shardeum?tab=readme-ov-file#installation) to run `shardus start 10` as well as boot a [distributor](https://github.com/shardeum/relayer-distributor) in MQ mode following the instructions as well.
 
-## Instalation
+## Installation
 
-Pulll the JSON-RPC server image:
+Pull the JSON-RPC server image:
 ```bash
 docker pull ghcr.io/shardeum/ldrpc-docker
 ```
@@ -27,8 +27,8 @@ To generate collector public and secret keys, you can generate them using the fo
 
 ```bash
 $ docker run -it ghcr.io/shardeum/ldrpc-docker /bin/bash
-root@b903ee67f879:/app$ cd shardeum/
-root@b903ee67f879:/app/shardeum$ node scripts/generateWallet.js 
+node@b903ee67f879:~$ cd shardeum/
+node@b903ee67f879:~/shardeum$ node scripts/generateWallet.js 
 Public Key: <your-collector-pubkey>
 Secret Key: <your-collector-secretkey>
 ```
@@ -39,13 +39,14 @@ Run the service, replacing the env variables below like `<archiver-ip>` with the
 
 ```bash
 docker run -p 8080:8080 -p 6101:6101 -d \
-  -v shardeum_db:/home/shardeum/shardeum/db \
-  -v relayer_collector_db:/home/shardeum/relayer-collector/db \
-  -v logs:/home/shardeum/.pm2/logs \
+  -v shardeum_db:/home/node/shardeum/db \
+  -v relayer_collector_db:/home/node/relayer-collector/db \
+  -v logs:/home/node/.pm2/logs \
   -e ARCHIVER_IP=<archiver-ip> \
   -e ARCHIVER_PORT=<archiver-port> \
   -e ARCHIVER_PUBKEY=<archiver-pubkey> \
   -e DISTRIBUTOR_IP=<distributor-ip> \
+  -e DISTRIBUTOR_PORT=<distributor-port> \
   -e DISTRIBUTOR_PUBKEY=<distributor-pubkey> \
   -e COLLECTOR_PUBKEY=<your-collector-pubkey> \
   -e COLLECTOR_SECRETKEY=<your-collector-secretkey> \
@@ -81,6 +82,7 @@ The configuration is done through environment variables when running the contain
 - `ARCHIVER_IP`: IP address of the archiver
 - `ARCHIVER_PUBKEY`: Public key of the archiver
 - `DISTRIBUTOR_IP`: IP address of the distributor
+- `DISTRIBUTOR_PORT`: PORT address of the distributor
 - `DISTRIBUTOR_PUBKEY`: Public key of the distributor
 - `COLLECTOR_PUBKEY`: Your collector public key
 - `COLLECTOR_SECRETKEY`: Your collector secret key
@@ -98,8 +100,8 @@ The configuration is done through environment variables when running the contain
 
 If you want to persist the data between runs, you can mount volumes for the database directories:
 ```
-  -v shardeum_db:/home/shardeum/shardeum/db \
-  -v relayer_collector_db:/home/shardeum/relayer-collector/db \
+  -v shardeum_db:/home/node/shardeum/db \
+  -v relayer_collector_db:/home/node/relayer-collector/db \
 ```
 
 ## Build Configuration
@@ -124,7 +126,7 @@ docker build -f Dockerfile \
 you can attach to the container and check list out the services and their status with `pm2`
 ```bash
 $ docker exec -it $(docker ps --format '{{.Names}}' --filter ancestor=ghcr.io/shardeum/ldrpc-docker:itn4-1.16.3) /bin/bash
-root@b903ee67f879:/app$ pm2 list
+node@b903ee67f879:~$ pm2 list
 ```
 
 ## Github actions publishing

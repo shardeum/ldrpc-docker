@@ -12,29 +12,27 @@ ENV JSON_RPC_SERVER_BRANCH=${JSON_RPC_SERVER_BRANCH}
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Create non-root user and set up directories
-RUN groupadd -r shardeum && useradd -r -g shardeum -m shardeum && \
-    mkdir -p /home/shardeum/.npm-global && \
-    chown -R shardeum:shardeum /home/shardeum
-
 # Set npm to use user-specific global directory
-ENV NPM_CONFIG_PREFIX=/home/shardeum/.npm-global
+ENV NPM_CONFIG_PREFIX=/home/node/.npm-global
 
 # Install system dependencies
 RUN apt-get update && apt-get install -y jq \
     build-essential \
     curl \
     git \
-    python3
+    python3 
 
 # Switch to non-root user for npm global install
-USER shardeum
-WORKDIR /home/shardeum
+USER node
+WORKDIR /home/node
 
-ENV PATH="/home/shardeum/.npm-global/bin:/home/shardeum/.cargo/bin:${PATH}"
+ENV PATH="/home/node/.npm-global/bin:/home/node/.cargo/bin:${PATH}"
 
 # Install global npm packages
 RUN npm install -g pm2
+
+RUN mkdir -p /home/node/bin
+ENV PATH="/home/node/bin:${PATH}"
 
 # Copy and run install script
 COPY scripts/install.sh .
@@ -51,14 +49,17 @@ RUN cd json-rpc-server && npm install
 # Create required directories with proper ownership
 RUN mkdir -p shardeum/db && \
     chmod 750 shardeum/db
+RUN mkdir -p relayer-collector/db && \
+    chmod 750 relayer-collector/db
 
 # Copy ecosystem config
-COPY ecosystem.config.js /home/shardeum/
+COPY ecosystem.config.js /home/node/
 
 # Expose ports
 EXPOSE 8080 9001 10001 4000 6100 4446 6101
 
 # Configure services at runtime using environment variables
-COPY scripts/configure-and-start.sh /home/shardeum/
+COPY scripts/configure-and-start.sh /home/node/
+COPY scripts/run-backup.sh /home/node/
 
-CMD ["/home/shardeum/configure-and-start.sh"]
+CMD ["/home/node/configure-and-start.sh"]

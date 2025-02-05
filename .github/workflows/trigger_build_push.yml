@@ -82,13 +82,16 @@ jobs:
             -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ matrix.arch }}:${{ steps.build_config.outputs.IMAGE_TAG }} \
             .
 
-      - name: Push Docker image
+      - name: Push Docker image and cleanup
         run: |
           docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ matrix.arch }}:${{ steps.build_config.outputs.IMAGE_TAG }}
           if [ "${{ github.event_name }}" == "workflow_dispatch" ] && [ "${{ inputs.push_latest }}" == "true" ]; then
             docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ matrix.arch }}:${{ steps.build_config.outputs.IMAGE_TAG }} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ matrix.arch }}:latest
             docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ matrix.arch }}:latest
+            docker rmi ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ matrix.arch }}:latest
           fi
+          # Remove the image after pushing
+          docker rmi ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ matrix.arch }}:${{ steps.build_config.outputs.IMAGE_TAG }}
 
   create-manifest:
     needs: build
