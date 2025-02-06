@@ -52,7 +52,7 @@ fi
 # if we have a service validator database already dont restore it
 if [ ! -f "$SERVICE_VALIDATOR_DB_PATH" ]; then
     echo "Restoring service validator database at $SERVICE_VALIDATOR_DB_PATH"
-    if ! try_backups_for_days "$SERVICE_VALIDATOR_BASE_URL" "$SERVICE_VALIDATOR_DB_PATH"; then
+    if ! try_backups_for_days "$SERVICE_VALIDATOR_BACKUP_BASE_URL" "$SERVICE_VALIDATOR_DB_PATH"; then
         echo "Failed to restore service validator database after trying last ${days} days"
         exit 1
     fi
