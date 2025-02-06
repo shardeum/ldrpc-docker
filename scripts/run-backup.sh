@@ -3,7 +3,7 @@ if [ -z "$COLLECTOR_BACKUP_BASE_URL" ]; then
     export COLLECTOR_BACKUP_BASE_URL="https://storage.googleapis.com/ldrpc-seed-data/itn4/collector"
 fi
 if [ -z "$SERVICE_VALIDATOR_BACKUP_BASE_URL" ]; then
-    export SERVICE_VALIDATOR_BASE_URL="https://storage.googleapis.com/ldrpc-seed-data/itn4/shardeum"
+    export SERVICE_VALIDATOR_BACKUP_BASE_URL="https://storage.googleapis.com/ldrpc-seed-data/itn4/shardeum"
 fi
 
 get_date_str() {
