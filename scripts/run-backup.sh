@@ -8,13 +8,7 @@ fi
 
 get_date_str() {
     local days_ago=$1
-    if date -v-${days_ago}d >/dev/null 2>&1; then
-        # macOS
-        date -v-${days_ago}d +%Y%m%d
-    else
-        # Linux
-        date -d "$days_ago days ago" +%Y%m%d
-    fi
+    date -d "$days_ago days ago" +%Y%m%d
 }
 
 try_backup() {
