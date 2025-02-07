@@ -41,7 +41,7 @@ Run the service, replacing the env variables below like `<archiver-ip>` with the
 docker run -p 8080:8080 -p 6101:6101 -d \
   -v shardeum_db:/home/node/shardeum/db \
   -v relayer_collector_db:/home/node/relayer-collector/db \
-  -v logs:/home/node/.pm2/logs \
+  -v logs:/home/node/.pm2 \
   -e ARCHIVER_IP=<archiver-ip> \
   -e ARCHIVER_PORT=<archiver-port> \
   -e ARCHIVER_PUBKEY=<archiver-pubkey> \

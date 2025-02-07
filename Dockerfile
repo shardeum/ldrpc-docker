@@ -62,4 +62,7 @@ EXPOSE 8080 9001 10001 4000 6100 4446 6101
 COPY scripts/configure-and-start.sh /home/node/
 COPY scripts/run-backup.sh /home/node/
 
+# Create PM2 directory with proper permissions
+RUN mkdir -p /home/node/.pm2 && chmod 750 /home/node/.pm2
+
 CMD ["/home/node/configure-and-start.sh"]
