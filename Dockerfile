@@ -56,7 +56,7 @@ RUN mkdir -p relayer-collector/db && \
 COPY ecosystem.config.js /home/node/
 
 # Expose ports
-EXPOSE 8080 9001 10001 4000 6100 4446 6101
+EXPOSE 8080 9001 10001 4000 6100 4446 4444 6101
 
 # Configure services at runtime using environment variables
 COPY scripts/configure-and-start.sh /home/node/
