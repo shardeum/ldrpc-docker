@@ -17,7 +17,7 @@ try_backup() {
     local target_path="$3"
     local backup_url="${base_url}.${date_str}.tgz"
     
-    echo "Trying backup from ${date_str} at ${backup_url}"
+    echo "Downloading backup from ${date_str} at ${backup_url}"
     if curl --retry 3 --retry-delay 2 -sL "${backup_url}" | tar -xz -O > "${target_path}"; then
         return 0
     fi
@@ -35,7 +35,7 @@ try_backups_for_days() {
             echo "Successfully restored backup from ${date_str}"
             return 0
         fi
-        echo "Failed to restore backup from ${date_str}, trying previous day..."
+        echo "Backup from ${date_str} unavailable, trying previous day..."
     done
     return 1
 }
