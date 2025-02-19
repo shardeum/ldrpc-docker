@@ -35,7 +35,7 @@ try_backups_for_days() {
             echo "Successfully restored backup from ${date_str}"
             return 0
         fi
-        echo "Failed to restore backup from ${date_str}, trying previous day..."
+        echo "Backup from ${date_str} unavailable, trying previous day..."
     done
     return 1
 }
