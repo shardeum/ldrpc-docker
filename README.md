@@ -11,11 +11,13 @@ This docker container is meant to run all the services in the right dotted box o
 ## Prerequisites
 
 ### Archiver and distributor
+
 You will need to have an archiver and distributor running somewhere. These configs will be provided by a shardeum representative or if you need to run a local devnet you can follow [these instructions](https://github.com/shardeum/shardeum?tab=readme-ov-file#installation) to run `shardus start 10` as well as boot a [distributor](https://github.com/shardeum/relayer-distributor) in MQ mode following the instructions as well.
 
 ## Installation
 
 Pull the JSON-RPC server image:
+
 ```bash
 docker pull ghcr.io/shardeum/ldrpc-docker
 ```
@@ -64,7 +66,8 @@ docker run -p 8080:8080 -p 9001:9001 -p 10001:10001 -p 4000:4000 -p 6100:6100 -p
 
 ## Testing the service
 
-The JSON-RPC server will be available at `http://localhost:8080` and you can now test it with curl: 
+The JSON-RPC server will be available at `http://localhost:8080` and you can now test it with curl:
+
 ```bash
 $ curl -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","method":"eth_chainId","params":[],"id":1}' http://localhost:8080
 
@@ -86,7 +89,7 @@ The configuration is done through environment variables when running the contain
 - `DISTRIBUTOR_PUBKEY`: Public key of the distributor
 - `COLLECTOR_PUBKEY`: Your collector public key
 - `COLLECTOR_SECRETKEY`: Your collector secret key
-- `COLLECTOR_MODE`: Mode of the collector - use `MQ`, WS is deprecated 
+- `COLLECTOR_MODE`: Mode of the collector - use `MQ`, WS is deprecated
 - `RMQ_HOST`: Host of the RabbitMQ server
 - `RMQ_PORT`: Port of the RabbitMQ server
 - `RMQ_PROTOCOL`: Protocol of the RabbitMQ server
@@ -99,7 +102,8 @@ The configuration is done through environment variables when running the contain
 ### Volumes
 
 If you want to persist the data between runs, you can mount volumes for the database directories:
-```
+
+```bash
   -v shardeum_db:/home/node/shardeum/db \
   -v relayer_collector_db:/home/node/relayer-collector/db \
 ```
@@ -107,11 +111,13 @@ If you want to persist the data between runs, you can mount volumes for the data
 ## Build Configuration
 
 The branch configuration is done through build arguments when building the container:
+
 - `SHARDEUM_BRANCH`: Branch of the shardeum repository to use
 - `RELAYER_COLLECTOR_BRANCH`: Branch of the relayer-collector repository to use
 - `JSON_RPC_SERVER_BRANCH`: Branch of the json-rpc-server repository to use
 
 Examples
+
 ```bash
 docker build -f Dockerfile \
   --build-arg SHARDEUM_BRANCH=itn4-1.16.3 \
@@ -330,11 +336,37 @@ URL: <http://localhost:9001/is-healthy>
 ## Troubleshooting
 
 ### Debugging
+
 you can attach to the container and check list out the services and their status with `pm2`
+
 ```bash
 $ docker exec -it $(docker ps --format '{{.Names}}' --filter ancestor=ghcr.io/shardeum/ldrpc-docker:itn4-1.16.3) /bin/bash
 node@b903ee67f879:~$ pm2 list
 ```
+
+### Handling Connection Loss
+
+In rare cases, the Collector Server may lose its connection with RabbitMQ and fail to recover automatically. If this happens, you will see errors in the `collector-server-error.log` file, such as:
+`IllegalOperationError: Channel closed` or `Connection error: Error: Channel closed by server: 406 (PRECONDITION-FAILED)`
+
+To resolve this issue, restart the Collector Server using the following command:
+
+```bash
+docker exec -it <container-id> pm2 restart collector-server
+```
+
+### Error messages and Recovery
+
+You may also encounter the following error messages in the logs:
+
+- The last stored cycle counter does not match with the last stored cycle count! Patch the missing cycle data and start the server again!
+- The last saved receipts of last N cycles data do not match with the distributor data! Clear the DB and start the server again!
+- The last saved originalTxsData of last N cycles data do not match with the distributor data! Clear the DB and start the server again!
+- ❗ Verification failed for cycle XXXX. Mismatching Receipts[or Transactions].
+- Cycle XXXX is missing from the database.
+- Identified missing data for cycle: XXXX
+
+You need not worry if you see such error messages, our systems are built to recover from these scenarios and sync & verify the missing data.
 
 ## Github actions publishing
 You can make builds and publish them via the github actions in this repository. It has inputs to the workflow that get passed to the build args for docker, and wether or not to publish to latest or not.
