@@ -181,7 +181,7 @@ Logs are stored at:
 - Info logs: `~/xyz/pm2/logs/json-rpc-server-out.log`
 - Error logs: `~/xyz/pm2/logs/json-rpc-server-error.log`
 
-> Note: In the `json-rpc-server-out.log` file, if you see messages like `Updating NodeList from XXXX and nodelist_update: YYYms` or `<N> Healthy Archivers active in the Network` -> This means your JSON-RPC server is active and updating important network information from the network regularly.
+**Important Note:** In the `json-rpc-server-out.log` file, if you see messages like `Updating NodeList from XXXX and nodelist_update: YYYms` or `<N> Healthy Archivers active in the Network` -> This means your JSON-RPC server is active and updating important network information from the network regularly.
 
 ### Collector Server healthcheck API
 
@@ -233,7 +233,7 @@ Logs are stored at:
 - Info logs: ~/xyz/pm2/logs/collector-server-out.log
 - Error logs: ~/xyz/pm2/logs/collector-server-error.log
   
-Important Note: In the `collector-server-out.log` file, if you see messages like:
+**Important Note:** In the `collector-server-out.log` file, if you see messages like:
 
 - `🟢 Verification successful. Updating checkpoint to XXXX` -> This means that the collector is syncing data and also verifying it successfully. Once the XXXX matches latest_cycle_from_explorer - 21 (21 is a threshold from latest cycle to trigger verification of a cycle), it means data verification is caught up with the network.
 
@@ -295,7 +295,7 @@ Sample Response for `/totalData` API:
 }
 ```
 
-> Note: The /totalData API is resource-intensive and may respond slowly. Avoid frequent requests within a short period to prevent overloading the Collector API Server.
+**Important Note:** The `/totalData` API is resource-intensive and may respond slowly. Avoid frequent requests within a short period to prevent overloading the Collector API Server.
 
 ### Service Validator healthcheck API
 
@@ -359,14 +359,14 @@ docker exec -it <container-id> pm2 restart collector-server
 
 You may also encounter the following error messages in the logs:
 
-- The last stored cycle counter does not match with the last stored cycle count! Patch the missing cycle data and start the server again!
-- The last saved receipts of last N cycles data do not match with the distributor data! Clear the DB and start the server again!
-- The last saved originalTxsData of last N cycles data do not match with the distributor data! Clear the DB and start the server again!
-- ❗ Verification failed for cycle XXXX. Mismatching Receipts[or Transactions].
-- Cycle XXXX is missing from the database.
-- Identified missing data for cycle: XXXX
+- `The last stored cycle counter does not match with the last stored cycle count! Patch the missing cycle data and start the server again!`
+- `The last saved receipts of last N cycles data do not match with the distributor data! Clear the DB and start the server again!`
+- `The last saved originalTxsData of last N cycles data do not match with the distributor data! Clear the DB and start the server again!`
+- `❗ Verification failed for cycle XXXX. Mismatching Receipts[or Transactions]`
+- `Cycle XXXX is missing from the database`
+- `Identified missing data for cycle: XXXX`
 
-You need not worry if you see such error messages, our systems are built to recover from these scenarios and sync & verify the missing data.
+Please don't worry if you encounter any of the above error messages. Our systems are designed to automatically recover, sync, and verify any missing data.
 
 ## Github actions publishing
 You can make builds and publish them via the github actions in this repository. It has inputs to the workflow that get passed to the build args for docker, and wether or not to publish to latest or not.
