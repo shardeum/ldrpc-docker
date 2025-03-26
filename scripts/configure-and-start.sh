@@ -62,10 +62,15 @@ npm run compile
 
 cd /home/node/
 
-# Sync backup and dont start if it exits with an error
-if ! ./run-backup.sh; then
-  echo "Failed to sync backup. Exiting early."
-  exit 1
+# Skip backup if SKIP_BACKUP is set to 'true'
+if [ "$SKIP_BACKUP_DOWNLOAD" = "true" ]; then
+  echo "Skipping backup download as SKIP_BACKUP_DOWNLOAD=true"
+else
+  # Sync backup and dont start if it exits with an error
+  if ! ./run-backup.sh; then
+    echo "Failed to sync backup. Exiting early."
+    exit 1
+  fi
 fi
 
 # Start services
