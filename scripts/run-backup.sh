@@ -1,9 +1,9 @@
 # only set these if they arent set in the environment
 if [ -z "$COLLECTOR_BACKUP_BASE_URL" ]; then
-    export COLLECTOR_BACKUP_BASE_URL="https://storage.googleapis.com/ldrpc-seed-data/itn4/collector"
+    export COLLECTOR_BACKUP_BASE_URL="https://storage.googleapis.com/shardeum-testnet-ldrpc-seed-data/testnet/collector"
 fi
 if [ -z "$SERVICE_VALIDATOR_BACKUP_BASE_URL" ]; then
-    export SERVICE_VALIDATOR_BACKUP_BASE_URL="https://storage.googleapis.com/ldrpc-seed-data/itn4/shardeum"
+    export SERVICE_VALIDATOR_BACKUP_BASE_URL="https://storage.googleapis.com/shardeum-testnet-ldrpc-seed-data/testnet/shardeum"
 fi
 
 get_date_str() {
