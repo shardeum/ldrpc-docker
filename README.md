@@ -61,6 +61,7 @@ docker run -p 8080:8080 -p 9001:9001 -p 10001:10001 -p 4000:4000 -p 6100:6100 -p
   -e RMQ_CYCLES_QUEUE_NAME=<rmq-cycles-queue-name> \
   -e RMQ_RECEIPTS_QUEUE_NAME=<rmq-receipts-queue-name> \
   -e RMQ_ORIGINAL_TXS_QUEUE_NAME=<rmq-original-txs-queue-name> \
+  -e CHAIN_ID=<chain-id> \
   ghcr.io/shardeum/ldrpc-docker
 ```
 
@@ -98,6 +99,17 @@ The configuration is done through environment variables when running the contain
 - `RMQ_CYCLES_QUEUE_NAME`: Name of the cycles queue
 - `RMQ_RECEIPTS_QUEUE_NAME`: Name of the receipts queue
 - `RMQ_ORIGINAL_TXS_QUEUE_NAME`: Name of the original transactions queue
+- `CHAIN_ID`: The chain ID of the network
+
+### Skip Backup Download Option
+
+If you want to skip the backup download process during startup (not recommended for production), you can add the following environment variable:
+
+```bash
+  -e SKIP_BACKUP_DOWNLOAD=true
+```
+
+This will prevent the service from downloading a backup of the databases before starting. This can be useful during development or testing, but should not be used in production environments where data integrity is critical.
 
 ### Volumes
 
