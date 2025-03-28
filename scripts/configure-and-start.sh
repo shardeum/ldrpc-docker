@@ -56,6 +56,7 @@ jq --arg ip "$ARCHIVER_IP" --arg key "$ARCHIVER_PUBKEY" \
    archiverConfig.json > tmp.json && mv tmp.json archiverConfig.json
 
 sed -i "/collectorSourcing/,/},/ s/enabled: false/enabled: true/" src/config.ts
+sed -i "/serviceValidatorSourcing/,/},/ s/enabled: false/enabled: true/" src/config.ts
 sed -i "s|collectorApiServerUrl: 'http[^']*'|collectorApiServerUrl: 'http://0.0.0.0:6101'|g" src/config.ts
 sed -i "s/serveSubscriptions: Boolean(process.env.WS_SAVE_SUBSCRIPTIONS) || false/serveSubscriptions: Boolean(process.env.WS_SAVE_SUBSCRIPTIONS) || true/" src/config.ts
 npm run compile
