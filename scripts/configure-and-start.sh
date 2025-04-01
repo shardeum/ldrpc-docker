@@ -18,7 +18,7 @@ required_vars=(
   COLLECTOR_MODE
   NETWORK
 )
-export SAVE_SUBSCRIPTIONS='true'
+export WS_SAVE_SUBSCRIPTIONS='true'
 
 missing_vars=()
 for var in "${required_vars[@]}"; do
