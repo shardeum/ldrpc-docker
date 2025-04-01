@@ -55,8 +55,8 @@ docker run -p 8080:8080 -p 9001:9001 -p 10001:10001 -p 4000:4000 -p 6100:6100 -p
   ghcr.io/shardeum/ldrpc-docker
 ```
 
-### Custom Build
-You can run a custom network/build by passing `custom` to `-e NETWORK`, which doesnt include a predefined configuration for a network. you will need to put the missing env vars in yourself here is an example:
+### Custom Network
+You can run a custom network configuration by passing `custom` to `-e NETWORK`, which doesnt include a predefined configuration for a network. you will need to put the missing env vars in yourself here is an example:
 
 ```bash
 docker run -p 8080:8080 -p 9001:9001 -p 10001:10001 -p 4000:4000 -p 6100:6100 -p 4446:4446 -p 4444:4444 -p 6101:6101 -d \
