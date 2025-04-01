@@ -1,11 +1,3 @@
-# only set these if they arent set in the environment
-if [ -z "$COLLECTOR_BACKUP_BASE_URL" ]; then
-    export COLLECTOR_BACKUP_BASE_URL="https://storage.googleapis.com/shardeum-testnet-ldrpc-seed-data/testnet/collector"
-fi
-if [ -z "$SERVICE_VALIDATOR_BACKUP_BASE_URL" ]; then
-    export SERVICE_VALIDATOR_BACKUP_BASE_URL="https://storage.googleapis.com/shardeum-testnet-ldrpc-seed-data/testnet/shardeum"
-fi
-
 get_date_str() {
     local days_ago=$1
     date -d "$days_ago days ago" +%Y%m%d

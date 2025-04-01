@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# Pull in the config based on environment (if its not custom) first so the required_vars check passes
+if [ "$NETWORK" != "custom" ]; then
+  source ./configs/$NETWORK.sh
+fi
+
 # Check for required environment variables
 required_vars=(
   ARCHIVER_IP
@@ -11,7 +16,9 @@ required_vars=(
   COLLECTOR_PUBKEY
   COLLECTOR_SECRETKEY
   COLLECTOR_MODE
+  NETWORK
 )
+export SAVE_SUBSCRIPTIONS='true'
 
 missing_vars=()
 for var in "${required_vars[@]}"; do
@@ -58,7 +65,6 @@ jq --arg ip "$ARCHIVER_IP" --arg key "$ARCHIVER_PUBKEY" \
 sed -i "/collectorSourcing/,/},/ s/enabled: false/enabled: true/" src/config.ts
 sed -i "/serviceValidatorSourcing/,/},/ s/enabled: false/enabled: true/" src/config.ts
 sed -i "s|collectorApiServerUrl: 'http[^']*'|collectorApiServerUrl: 'http://0.0.0.0:6101'|g" src/config.ts
-sed -i "s/serveSubscriptions: Boolean(process.env.WS_SAVE_SUBSCRIPTIONS) || false/serveSubscriptions: Boolean(process.env.WS_SAVE_SUBSCRIPTIONS) || true/" src/config.ts
 npm run compile
 
 cd /home/node/
