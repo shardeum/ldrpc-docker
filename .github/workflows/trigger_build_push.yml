@@ -90,7 +90,7 @@ jobs:
             --build-arg SHARDEUM_BRANCH=${{ steps.build_config.outputs.SHARDEUM_BRANCH }} \
             --build-arg RELAYER_COLLECTOR_BRANCH=${{ steps.build_config.outputs.RELAYER_COLLECTOR_BRANCH }} \
             --build-arg JSON_RPC_SERVER_BRANCH=${{ steps.build_config.outputs.JSON_RPC_SERVER_BRANCH }} \
-            --build-arg NETWORK=${{ inputs.network }} \
+            --build-arg NETWORK=${{ steps.build_config.outputs.NETWORK }} \
             -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ matrix.arch }}:${{ steps.build_config.outputs.IMAGE_TAG }} \
             .
 
