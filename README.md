@@ -44,6 +44,10 @@ docker run -p 8080:8080 -p 9001:9001 -p 10001:10001 -p 4000:4000 -p 6100:6100 -p
   -v shardeum_db:/home/node/shardeum/db \
   -v relayer_collector_db:/home/node/relayer-collector/db \
   -v logs:/home/node/.pm2 \
+  -e ARCHIVER_IP=<archiver-ip> \
+  -e ARCHIVER_PUBKEY=<archiver-pubkey> \
+  -e DISTRIBUTOR_IP=<distributor-ip> \
+  -e DISTRIBUTOR_PUBKEY=<distributor-pubkey> \
   -e COLLECTOR_PUBKEY=<your-collector-pubkey> \
   -e COLLECTOR_SECRETKEY=<your-collector-secretkey> \
   -e RMQ_PASS=<rmq-pass> \
