@@ -39,7 +39,6 @@ Secret Key: <your-collector-secretkey>
 
 Run the service, replacing the env variables below like `<archiver-ip>` with the values provided to you by your contact at Shardeum
 
-`NETWORK` can be `mainnet` `stagenet` or `testnet`, you can also put `custom` and fill in the missing envs yourself.
 ```bash
 docker run -p 8080:8080 -p 9001:9001 -p 10001:10001 -p 4000:4000 -p 6100:6100 -p 4446:4446 -p 4444:4444 -p 6101:6101 -d \
   -v shardeum_db:/home/node/shardeum/db \
@@ -51,9 +50,19 @@ docker run -p 8080:8080 -p 9001:9001 -p 10001:10001 -p 4000:4000 -p 6100:6100 -p
   -e RMQ_CYCLES_QUEUE_NAME=<rmq-cycles-queue-name> \
   -e RMQ_RECEIPTS_QUEUE_NAME=<rmq-receipts-queue-name> \
   -e RMQ_ORIGINAL_TXS_QUEUE_NAME=<rmq-original-txs-queue-name> \
-  -e NETWORK=testnet
   ghcr.io/shardeum/ldrpc-docker
 ```
+
+### Per Network Tags
+We have per-network tags if you need to run something like `testnet` or `stagenet`. These tags correspond to specific image versions pre-configured for those networks.
+
+To use a network-specific tag, simply append the network name to the image name when pulling or running the container. For example, to use the `testnet` configuration:
+
+```bash
+ghcr.io/shardeum/shardeum-validator:testnet-{tag}
+```
+
+
 
 ### Custom Network
 You can run a custom network configuration by passing `custom` to `-e NETWORK`, which doesnt include a predefined configuration for a network. you will need to put the missing env vars in yourself here is an example:
