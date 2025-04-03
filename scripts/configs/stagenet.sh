@@ -9,7 +9,7 @@ export RMQ_PORT=5672
 export RMQ_PROTOCOL='amqps'
 export RMQ_USER='admin'
 export COLLECTOR_MODE='MQ'
-export CHAIN_ID=8082
+export CHAIN_ID=8081
 
 # only set these if they arent set in the environment
 if [ -z "$COLLECTOR_BACKUP_BASE_URL" ]; then
