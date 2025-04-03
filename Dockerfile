@@ -40,6 +40,10 @@ ENV PATH="/home/node/bin:${PATH}"
 COPY scripts/install.sh .
 RUN ./install.sh
 
+# Create configs directory and copy only the specified network config file
+RUN mkdir -p /home/node/configs
+COPY scripts/configs/${NETWORK}.sh /home/node/configs/${NETWORK}.sh
+
 # Clone and install repositories as non-root user with shallow clones
 RUN git clone --depth 1 -b ${SHARDEUM_BRANCH} https://github.com/shardeum/shardeum
 RUN cd shardeum && npm ci
