@@ -62,8 +62,6 @@ To use a network-specific tag, simply append the network name to the image name 
 ghcr.io/shardeum/shardeum-validator:testnet-{tag}
 ```
 
-
-
 ### Custom Network
 You can run a custom network configuration by passing `custom` to `-e NETWORK`, which doesnt include a predefined configuration for a network. you will need to put the missing env vars in yourself here is an example:
 
