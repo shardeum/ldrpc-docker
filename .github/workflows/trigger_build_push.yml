@@ -22,7 +22,6 @@ on:
       image_tag:
         description: 'Docker image tag. Should be prefixed with the network name.'
         required: true
-        default: 'testnet-1'
       push_latest:
         description: 'Push latest tag'
         type: boolean
