@@ -10,24 +10,32 @@ on:
       shardeum_branch:
         description: 'Shardeum repository branch'
         required: true
-        default: 'dev'
+        default: 'mainnet-launch'
       relayer_collector_branch:
         description: 'Relayer collector repository branch'
         required: true
-        default: 'dev'
+        default: 'mainnet-launch'
       json_rpc_server_branch:
         description: 'JSON RPC server repository branch'
         required: true
-        default: 'dev'
+        default: 'mainnet-launch'
       image_tag:
-        description: 'Docker image tag'
+        description: 'Docker image tag. Should be prefixed with the network name.'
         required: true
-        default: 'dev'
       push_latest:
         description: 'Push latest tag'
         type: boolean
         required: true
         default: false
+      network:
+        type: choice
+        description: 'Network. Will use the config for the network in scripts/config if it exists. Custom if you are doing a custom build and will use environment variables passed to Docker run.'
+        required: true
+        options:
+          - mainnet
+          - stagenet
+          - testnet
+          - custom
   pull_request:
     branches: [ main ]
 
@@ -64,11 +72,13 @@ jobs:
             echo "RELAYER_COLLECTOR_BRANCH=dev" >> $GITHUB_OUTPUT
             echo "JSON_RPC_SERVER_BRANCH=dev" >> $GITHUB_OUTPUT
             echo "IMAGE_TAG=pr-preview-${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
+            echo "NETWORK=custom" >> $GITHUB_OUTPUT
           else
             echo "SHARDEUM_BRANCH=${{ inputs.shardeum_branch }}" >> $GITHUB_OUTPUT
             echo "RELAYER_COLLECTOR_BRANCH=${{ inputs.relayer_collector_branch }}" >> $GITHUB_OUTPUT
             echo "JSON_RPC_SERVER_BRANCH=${{ inputs.json_rpc_server_branch }}" >> $GITHUB_OUTPUT
             echo "IMAGE_TAG=${{ inputs.image_tag }}" >> $GITHUB_OUTPUT
+            echo "NETWORK=${{ inputs.network }}" >> $GITHUB_OUTPUT
           fi
       
       - name: Build Docker image
@@ -79,6 +89,7 @@ jobs:
             --build-arg SHARDEUM_BRANCH=${{ steps.build_config.outputs.SHARDEUM_BRANCH }} \
             --build-arg RELAYER_COLLECTOR_BRANCH=${{ steps.build_config.outputs.RELAYER_COLLECTOR_BRANCH }} \
             --build-arg JSON_RPC_SERVER_BRANCH=${{ steps.build_config.outputs.JSON_RPC_SERVER_BRANCH }} \
+            --build-arg NETWORK=${{ steps.build_config.outputs.NETWORK }} \
             -t ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-${{ matrix.arch }}:${{ steps.build_config.outputs.IMAGE_TAG }} \
             .
 

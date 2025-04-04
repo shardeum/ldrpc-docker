@@ -1,14 +1,16 @@
 FROM node:18.19.1-slim
 
 # Define build arguments for repository branches
-ARG SHARDEUM_BRANCH=dev
-ARG RELAYER_COLLECTOR_BRANCH=dev
-ARG JSON_RPC_SERVER_BRANCH=dev
+ARG SHARDEUM_BRANCH=mainnet-launch
+ARG RELAYER_COLLECTOR_BRANCH=mainnet-launch
+ARG JSON_RPC_SERVER_BRANCH=mainnet-launch
+ARG NETWORK=custom
 
 # Set environment variables from build args
 ENV SHARDEUM_BRANCH=${SHARDEUM_BRANCH}
 ENV RELAYER_COLLECTOR_BRANCH=${RELAYER_COLLECTOR_BRANCH}
 ENV JSON_RPC_SERVER_BRANCH=${JSON_RPC_SERVER_BRANCH}
+ENV NETWORK=${NETWORK}
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -37,6 +39,10 @@ ENV PATH="/home/node/bin:${PATH}"
 # Copy and run install script
 COPY scripts/install.sh .
 RUN ./install.sh
+
+# Create configs directory and copy only the specified network config file
+RUN mkdir -p /home/node/configs
+COPY scripts/configs/${NETWORK}.sh /home/node/configs/${NETWORK}.sh
 
 # Clone and install repositories as non-root user with shallow clones
 RUN git clone --depth 1 -b ${SHARDEUM_BRANCH} https://github.com/shardeum/shardeum

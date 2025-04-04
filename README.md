@@ -45,6 +45,36 @@ docker run -p 8080:8080 -p 9001:9001 -p 10001:10001 -p 4000:4000 -p 6100:6100 -p
   -v relayer_collector_db:/home/node/relayer-collector/db \
   -v logs:/home/node/.pm2 \
   -e ARCHIVER_IP=<archiver-ip> \
+  -e ARCHIVER_PUBKEY=<archiver-pubkey> \
+  -e DISTRIBUTOR_IP=<distributor-ip> \
+  -e DISTRIBUTOR_PUBKEY=<distributor-pubkey> \
+  -e COLLECTOR_PUBKEY=<your-collector-pubkey> \
+  -e COLLECTOR_SECRETKEY=<your-collector-secretkey> \
+  -e RMQ_PASS=<rmq-pass> \
+  -e RMQ_CYCLES_QUEUE_NAME=<rmq-cycles-queue-name> \
+  -e RMQ_RECEIPTS_QUEUE_NAME=<rmq-receipts-queue-name> \
+  -e RMQ_ORIGINAL_TXS_QUEUE_NAME=<rmq-original-txs-queue-name> \
+  ghcr.io/shardeum/ldrpc-docker
+```
+
+### Per Network Tags
+We have per-network tags if you need to run something like `testnet` or `stagenet`. These tags correspond to specific image versions pre-configured for those networks.
+
+To use a network-specific tag, simply append the network name to the image name when pulling or running the container. For example, to use the `testnet` configuration:
+
+```bash
+ghcr.io/shardeum/shardeum-validator:testnet-{tag}
+```
+
+### Custom Network
+You can run a custom network configuration by passing `custom` to `-e NETWORK`, which doesnt include a predefined configuration for a network. you will need to put the missing env vars in yourself here is an example:
+
+```bash
+docker run -p 8080:8080 -p 9001:9001 -p 10001:10001 -p 4000:4000 -p 6100:6100 -p 4446:4446 -p 4444:4444 -p 6101:6101 -d \
+  -v shardeum_db:/home/node/shardeum/db \
+  -v relayer_collector_db:/home/node/relayer-collector/db \
+  -v logs:/home/node/.pm2 \
+  -e ARCHIVER_IP=<archiver-ip> \
   -e ARCHIVER_PORT=<archiver-port> \
   -e ARCHIVER_PUBKEY=<archiver-pubkey> \
   -e DISTRIBUTOR_IP=<distributor-ip> \
