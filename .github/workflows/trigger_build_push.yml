@@ -20,7 +20,7 @@ on:
         required: true
         default: 'mainnet-launch'
       image_tag:
-        description: 'Docker image tag. Should be prefixed with the network name.'
+        description: 'Docker image tag (will be combined with network name)'
         required: true
       push_latest:
         description: 'Push latest tag'
@@ -77,7 +77,12 @@ jobs:
             echo "SHARDEUM_BRANCH=${{ inputs.shardeum_branch }}" >> $GITHUB_OUTPUT
             echo "RELAYER_COLLECTOR_BRANCH=${{ inputs.relayer_collector_branch }}" >> $GITHUB_OUTPUT
             echo "JSON_RPC_SERVER_BRANCH=${{ inputs.json_rpc_server_branch }}" >> $GITHUB_OUTPUT
-            echo "IMAGE_TAG=${{ inputs.image_tag }}" >> $GITHUB_OUTPUT
+            # Only add network prefix for non-custom networks
+            if [ "${{ inputs.network }}" != "custom" ]; then
+              echo "IMAGE_TAG=${{ inputs.network }}-${{ inputs.image_tag }}" >> $GITHUB_OUTPUT
+            else
+              echo "IMAGE_TAG=${{ inputs.image_tag }}" >> $GITHUB_OUTPUT
+            fi
             echo "NETWORK=${{ inputs.network }}" >> $GITHUB_OUTPUT
           fi
       
@@ -114,7 +119,12 @@ jobs:
           if [ "${{ github.event_name }}" == "pull_request" ]; then
             echo "IMAGE_TAG=pr-preview-${{ github.event.pull_request.number }}" >> $GITHUB_OUTPUT
           else
-            echo "IMAGE_TAG=${{ inputs.image_tag }}" >> $GITHUB_OUTPUT
+            # Only add network prefix for non-custom networks
+            if [ "${{ inputs.network }}" != "custom" ]; then
+              echo "IMAGE_TAG=${{ inputs.network }}-${{ inputs.image_tag }}" >> $GITHUB_OUTPUT
+            else
+              echo "IMAGE_TAG=${{ inputs.image_tag }}" >> $GITHUB_OUTPUT
+            fi
           fi
 
       - name: Log in to the Container registry
