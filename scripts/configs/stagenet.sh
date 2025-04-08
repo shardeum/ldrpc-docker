@@ -1,7 +1,7 @@
 export ARCHIVER_PORT=4000
 export DISTRIBUTOR_PORT=6100
-export RMQ_HOST=https://b-6bd7f420-1af4-4d3b-8c42-4e190249f25e.mq.us-east-2.amazonaws.com
-export RMQ_PORT=5672
+export RMQ_HOST=http://b-6bd7f420-1af4-4d3b-8c42-4e190249f25e.mq.us-east-2.amazonaws.com
+export RMQ_PORT=5671
 export RMQ_PROTOCOL='amqps'
 export COLLECTOR_MODE='MQ'
 export CHAIN_ID=8081
