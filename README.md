@@ -50,7 +50,9 @@ docker run -p 8080:8080 -p 9001:9001 -p 10001:10001 -p 4000:4000 -p 6100:6100 -p
   -e DISTRIBUTOR_PUBKEY=<distributor-pubkey> \
   -e COLLECTOR_PUBKEY=<your-collector-pubkey> \
   -e COLLECTOR_SECRETKEY=<your-collector-secretkey> \
+  -e RMQ_USER=<rmq-user> \
   -e RMQ_PASS=<rmq-pass> \
+  -e RMQ_HOST=<rmq-host> \
   -e RMQ_CYCLES_QUEUE_NAME=<rmq-cycles-queue-name> \
   -e RMQ_RECEIPTS_QUEUE_NAME=<rmq-receipts-queue-name> \
   -e RMQ_ORIGINAL_TXS_QUEUE_NAME=<rmq-original-txs-queue-name> \
