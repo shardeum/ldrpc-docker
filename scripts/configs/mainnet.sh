@@ -1,5 +1,5 @@
 export ARCHIVER_PORT=4000
-export DISTRIBUTOR_PORT=6001
+export DISTRIBUTOR_PORT=6100
 export RMQ_HOST=b-ffbb09f7-03a3-41dc-a94b-1ec1bcf81944.mq.us-east-2.amazonaws.com
 export RMQ_PORT=5671
 export RMQ_PROTOCOL='amqps'
