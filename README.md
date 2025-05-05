@@ -94,6 +94,7 @@ docker run -p 8080:8080 -p 9001:9001 -p 10001:10001 -p 4000:4000 -p 6100:6100 -p
   -e RMQ_RECEIPTS_QUEUE_NAME=<rmq-receipts-queue-name> \
   -e RMQ_ORIGINAL_TXS_QUEUE_NAME=<rmq-original-txs-queue-name> \
   -e CHAIN_ID=<chain-id> \
+  -e SKIP_BACKUP_DOWNLOAD=true
   ghcr.io/shardeum/ldrpc-docker
 ```
 
