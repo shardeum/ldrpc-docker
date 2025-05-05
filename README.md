@@ -108,9 +108,11 @@ $ curl -X POST -H "Content-Type: application/json" --data '{"jsonrpc":"2.0","met
 {"jsonrpc":"2.0","id":1,"result":"0x1f92"}
 ```
 
-#### Demo syncing a small devnet
+#### Demo syncing
 
-https://github.com/user-attachments/assets/77efc123-38c1-4965-96fc-1f1d0dec314d
+
+https://github.com/user-attachments/assets/f3510534-49dc-40b3-b5d8-54a5f3002a89
+
 
 ## Run Configuration
 
