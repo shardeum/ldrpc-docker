@@ -20,6 +20,11 @@ required_vars=(
 )
 export WS_SAVE_SUBSCRIPTIONS='true'
 
+# Set RATE_LIMIT to false if it is not set
+if [ -z "$RATE_LIMIT" ]; then
+  export RATE_LIMIT=false
+fi
+
 missing_vars=()
 for var in "${required_vars[@]}"; do
   if [ -z "${!var}" ]; then
