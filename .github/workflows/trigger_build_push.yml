@@ -147,3 +147,38 @@ jobs:
               ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-arm64:latest
             docker manifest push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
           fi
+
+  slack-notify:
+    needs: create-manifest
+    runs-on: ubuntu-latest
+    if: success()
+    steps:
+      - name: Post a message in a channel
+        uses: slackapi/slack-github-action@v2.1.0
+        with:
+          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          payload: |
+            blocks:
+              - type: "header"
+                text:
+                  type: "plain_text"
+                  text: ":hammer_and_wrench: New Image Build Completed"
+              - type: "section"
+                fields:
+                  - type: "mrkdwn"
+                    text: "*Repository:*\n`${{ github.repository }}`"
+                  - type: "mrkdwn"
+                    text: "*Network:*\n`${{ inputs.network }}`"
+                  - type: "mrkdwn"
+                    text: "*Tag:*\n`${{ inputs.image_tag }}`"
+                  - type: "mrkdwn"
+                    text: "*Shardeum Branch:*\n`${{ inputs.shardeum_branch }}`"
+                  - type: "mrkdwn"
+                    text: "*Relayer Collector Branch:*\n`${{ inputs.relayer_collector_branch }}`"
+                  - type: "mrkdwn"
+                    text: "*JSON RPC Server Branch:*\n`${{ inputs.json_rpc_server_branch }}`"
+              - type: "context"
+                elements:
+                  - type: "mrkdwn"
+                    text: "Triggered by `${{ github.actor }}`. See run: <https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Workflow Run>"
