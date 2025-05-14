@@ -175,6 +175,8 @@ jobs:
                   - type: "mrkdwn"
                     text: "*Full Tag:*\n`${{ inputs.network }}-${{ inputs.image_tag }}`"
                   - type: "mrkdwn"
+                    text: "*Image URL:*\n`${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ inputs.network }}-${{ inputs.image_tag }}`"
+                  - type: "mrkdwn"
                     text: "*Shardeum Branch:*\n`${{ inputs.shardeum_branch }}`"
                   - type: "mrkdwn"
                     text: "*Relayer Collector Branch:*\n`${{ inputs.relayer_collector_branch }}`"
