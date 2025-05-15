@@ -1,0 +1,91 @@
+name: Promote Docker Tag to Latest
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag to promote to latest (e.g., mainnet-v1.2.3)'
+        required: true
+        type: string
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  promote-latest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Tag and push amd64 image as latest
+        run: |
+          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-amd64:${{ inputs.tag }}
+          docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-amd64:${{ inputs.tag }} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-amd64:latest
+          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-amd64:latest
+
+      - name: Tag and push arm64 image as latest
+        run: |
+          docker pull ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-arm64:${{ inputs.tag }}
+          docker tag ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-arm64:${{ inputs.tag }} ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-arm64:latest
+          docker push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-arm64:latest
+
+      - name: Create and push latest manifest and capture digest
+        id: push_manifest
+        run: |
+          docker manifest create ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest \
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-amd64:latest \
+            ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}-arm64:latest
+          
+          # The docker manifest push command outputs the digest directly to stdout
+          # e.g., sha256:0123456789abcdef...
+          MANIFEST_DIGEST=$(docker manifest push ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest)
+          echo "Pushed manifest digest: $MANIFEST_DIGEST" # Log for verification during workflow run
+          echo "digest=$MANIFEST_DIGEST" >> $GITHUB_OUTPUT
+
+      - name: Send Slack notification on success
+        if: success() # Only run this step if previous steps succeed
+        uses: slackapi/slack-github-action@v2.1.0
+        with:
+          webhook: ${{ secrets.SLACK_WEBHOOK_URL }}
+          webhook-type: incoming-webhook
+          payload: |
+            text: |
+              *:rocket: New Image Promoted to Latest*
+              Repository: `${{ github.repository }}`
+              Input Tag: `${{ inputs.tag }}`
+              Full Tag: `latest`
+              Image URL: `${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest`
+              Manifest Digest: `${{ steps.push_manifest.outputs.digest }}`
+              Triggered by: `${{ github.actor }}`
+              <https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Workflow Run>
+            blocks:
+              - type: header
+                text:
+                  type: plain_text
+                  text: ":rocket: New Image Promoted to Latest"
+              - type: section
+                fields:
+                  - type: mrkdwn
+                    text: "*Repository:* `${{ github.repository }}`"
+                  - type: mrkdwn
+                    text: "*Input Tag:* `${{ inputs.tag }}`"
+                  - type: mrkdwn
+                    text: "*Full Tag:* `latest`"
+                  - type: mrkdwn
+                    text: "*Image URL:* `${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest`"
+                  - type: mrkdwn
+                    text: "*Manifest Digest:* `${{ steps.push_manifest.outputs.digest }}`"
+              - type: context
+                elements:
+                  - type: mrkdwn
+                    text: "Triggered by `${{ github.actor }}`. <https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}|View Workflow Run>" 
