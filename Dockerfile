@@ -1,9 +1,9 @@
 FROM node:18.19.1-slim
 
 # Define build arguments for repository branches
-ARG SHARDEUM_BRANCH=mainnet-launch
-ARG RELAYER_COLLECTOR_BRANCH=mainnet-launch
-ARG JSON_RPC_SERVER_BRANCH=mainnet-launch
+ARG SHARDEUM_BRANCH=dev
+ARG RELAYER_COLLECTOR_BRANCH=dev
+ARG JSON_RPC_SERVER_BRANCH=dev
 ARG NETWORK=custom
 
 # Set environment variables from build args
