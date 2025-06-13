@@ -10,15 +10,15 @@ on:
       shardeum_branch:
         description: 'Shardeum repository branch'
         required: true
-        default: 'mainnet-launch'
+        default: 'dev'
       relayer_collector_branch:
         description: 'Relayer collector repository branch'
         required: true
-        default: 'mainnet-launch'
+        default: 'dev'
       json_rpc_server_branch:
         description: 'JSON RPC server repository branch'
         required: true
-        default: 'mainnet-launch'
+        default: 'dev'
       image_tag:
         description: 'Docker image tag (will be combined with network name)'
         required: true
@@ -30,6 +30,7 @@ on:
           - mainnet
           - stagenet
           - testnet
+          - devnet-us
           - custom
   pull_request:
     branches: [ main ]
