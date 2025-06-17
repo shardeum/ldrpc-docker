@@ -59,6 +59,10 @@ jq --arg ip "$DISTRIBUTOR_IP" \
 
 export SERVICE_VALIDATOR_DB_PATH=/home/node/shardeum/db/shardeum.sqlite
 export COLLECTOR_DB_PATH=/home/node/relayer-collector/db/db.sqlite3
+
+if [ -n "$SAVE_RECEIPTS_WITH_SIGNATURE_PACKS" ]; then
+  export SAVE_RECEIPTS_WITH_SIGNATURE_PACKS
+fi
 npm run prepare
 
 # Configure JSON RPC Server

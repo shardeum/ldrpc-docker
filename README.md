@@ -136,6 +136,7 @@ The configuration is done through environment variables when running the contain
 - `RMQ_RECEIPTS_QUEUE_NAME`: Name of the receipts queue
 - `RMQ_ORIGINAL_TXS_QUEUE_NAME`: Name of the original transactions queue
 - `CHAIN_ID`: The chain ID of the network
+- `SAVE_RECEIPTS_WITH_SIGNATURE_PACKS`: (Optional) Enable saving receipts with signature packs in the collector
 
 ### Skip Backup Download Option
 
