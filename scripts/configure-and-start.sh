@@ -54,7 +54,8 @@ jq --arg ip "$DISTRIBUTOR_IP" \
    --arg ckey "$COLLECTOR_PUBKEY" \
    --arg skey "$COLLECTOR_SECRETKEY" \
    --arg mode "$COLLECTOR_MODE" \
-   '.distributorInfo.ip |= $ip | .distributorInfo.port |= $port | .distributorInfo.publicKey |= $dkey | .collectorInfo.publicKey |= $ckey | .collectorInfo.secretKey |= $skey | .dataLogWrite = ($mode != "MQ")' \
+   --arg saveReceiptsWithSignaturePacks "${SAVE_RECEIPTS_WITH_SIGNATURE_PACKS:-true}" \
+   '.distributorInfo.ip |= $ip | .distributorInfo.port |= $port | .distributorInfo.publicKey |= $dkey | .collectorInfo.publicKey |= $ckey | .collectorInfo.secretKey |= $skey | .dataLogWrite = ($mode != "MQ") | .saveReceiptsWithSignaturePacks = ($saveReceiptsWithSignaturePacks == "true")' \
    config.json > temp.json && mv temp.json config.json
 
 export SERVICE_VALIDATOR_DB_PATH=/home/node/shardeum/db/shardeum.sqlite
