@@ -30,6 +30,7 @@ on:
           - mainnet
           - stagenet
           - testnet
+          - unstable
           - devnet-us
           - custom
   pull_request:
