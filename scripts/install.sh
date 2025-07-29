@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# Install Rust 1.74.1
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain 1.74.1
+# Install Rust 1.85.1
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain 1.85.1
 source $HOME/.cargo/env
 
 # Print versions
