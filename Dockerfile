@@ -1,4 +1,4 @@
-FROM node:18.19.1-slim
+FROM node:20.19.3-slim
 
 # Define build arguments for repository branches
 ARG SHARDEUM_BRANCH=dev
